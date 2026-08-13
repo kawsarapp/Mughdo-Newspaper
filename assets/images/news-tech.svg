@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" fill="#030712"/>
+  <rect width="800" height="450" fill="url(#grad_tech)" opacity="0.9"/>
+  <path d="M300 180 L400 120 L500 180 L400 240 Z" stroke="#06B6D4" stroke-width="4" fill="none"/>
+  <text x="400" y="360" font-family="'Hind Siliguri', sans-serif" font-size="28" font-weight="700" fill="#06B6D4" text-anchor="middle">বিজ্ঞান ও প্রযুক্তি | Tech News</text>
+  <defs>
+    <linearGradient id="grad_tech" x1="0" y1="0" x2="800" y2="450" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#164E63"/>
+    </linearGradient>
+  </defs>
+</svg>

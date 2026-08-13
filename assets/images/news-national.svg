@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" fill="#0F172A"/>
+  <rect width="800" height="450" fill="url(#grad1)" opacity="0.8"/>
+  <!-- National Flag Concept Circle -->
+  <circle cx="400" cy="200" r="90" fill="#EF4444"/>
+  <path d="M250 320 H550 V340 H250 Z" fill="#10B981"/>
+  <text x="400" y="380" font-family="'Hind Siliguri', sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" text-anchor="middle">জাতীয় সংবাদ | ProthomNews</text>
+  <defs>
+    <linearGradient id="grad1" x1="0" y1="0" x2="800" y2="450" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#064E3B"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+  </defs>
+</svg>

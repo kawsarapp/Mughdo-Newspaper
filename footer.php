@@ -1,0 +1,110 @@
+<?php
+/**
+ * ProthomNews Footer Template
+ *
+ * @package ProthomNews
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+$fb_url = get_theme_mod('social_fb', '');
+$tw_url = get_theme_mod('social_tw', '');
+$yt_url = get_theme_mod('social_yt', '');
+$ig_url = get_theme_mod('social_ig', '');
+?>
+</div><!-- /#spa-content-container -->
+
+<!-- Live REST API Search Modal Overlay -->
+<div id="search-modal-overlay" class="search-modal-overlay">
+  <div class="search-modal-box">
+    <button id="modal-close-btn" class="modal-close-btn" aria-label="Close Search">✕</button>
+    <h3 style="margin-bottom: 1rem; font-size:1.25rem;">খবর খুঁজুন</h3>
+    <div class="search-input-group">
+      <input type="text" id="live-search-input" class="search-input-field" placeholder="শিরোনাম বা কিওয়ার্ড লিখুন..." autocomplete="off" />
+    </div>
+    <div id="live-search-results" class="live-search-results-grid"></div>
+  </div>
+</div>
+
+<!-- Mobile Off-Canvas Drawer Menu -->
+<?php get_template_part('template-parts/mobile-drawer'); ?>
+
+<!-- Mobile App-like Sticky Bottom Bar -->
+<?php get_template_part('template-parts/mobile-bottom-bar'); ?>
+
+<!-- Sticky Bottom Banner Ad Slot -->
+<?php 
+$sticky_ad = get_theme_mod('ad_sticky_bottom', '');
+if (!empty($sticky_ad)) : 
+?>
+  <div class="prothom-ad-slot ad-sticky-bottom">
+    <button class="ad-close-btn" title="বিজ্ঞাপন বন্ধ করুন">✕</button>
+    <div class="ad-content"><?php echo $sticky_ad; ?></div>
+  </div>
+<?php endif; ?>
+
+<!-- Main Footer -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <!-- Footer Column 1: Brand -->
+      <div>
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo">
+          <?php bloginfo('name'); ?>
+        </a>
+        <p style="margin-top:0.75rem; font-size:0.9rem; max-width:400px; color:var(--text-muted);">
+          সত্যের সন্ধানে নির্ভীক। সর্বাধিক পঠিত ও নির্ভরযোগ্য বাংলা নিউজ পোর্টাল।
+        </p>
+        
+        <!-- Social Icons -->
+        <div style="display:flex; gap:0.75rem; margin-top:1rem;">
+          <?php if ($fb_url) : ?><a href="<?php echo esc_url($fb_url); ?>" target="_blank" rel="noopener">📘 Facebook</a><?php endif; ?>
+          <?php if ($tw_url) : ?><a href="<?php echo esc_url($tw_url); ?>" target="_blank" rel="noopener">🐤 X / Twitter</a><?php endif; ?>
+          <?php if ($yt_url) : ?><a href="<?php echo esc_url($yt_url); ?>" target="_blank" rel="noopener">▶️ YouTube</a><?php endif; ?>
+          <?php if ($ig_url) : ?><a href="<?php echo esc_url($ig_url); ?>" target="_blank" rel="noopener">📸 Instagram</a><?php endif; ?>
+        </div>
+      </div>
+
+      <!-- Footer Column 2: Categories -->
+      <div>
+        <h4 style="font-weight:700; margin-bottom:1rem; color:var(--text-primary);">বিভাগসমূহ</h4>
+        <?php
+        if (has_nav_menu('footer')) {
+            wp_nav_menu(array(
+                'theme_location' => 'footer',
+                'container'      => false,
+                'menu_class'     => 'footer-links',
+            ));
+        } else {
+            echo '<ul style="display:flex; flex-direction:column; gap:0.4rem;">';
+            echo '<li><a href="' . esc_url(home_url('/')) . '">জাতীয়</a></li>';
+            echo '<li><a href="' . esc_url(home_url('/')) . '">রাজনীতি</a></li>';
+            echo '<li><a href="' . esc_url(home_url('/')) . '">অর্থনীতি</a></li>';
+            echo '<li><a href="' . esc_url(home_url('/')) . '">খেলাধুলা</a></li>';
+            echo '</ul>';
+        }
+        ?>
+      </div>
+
+      <!-- Footer Column 3: Contact & Rights -->
+      <div>
+        <h4 style="font-weight:700; margin-bottom:1rem; color:var(--text-primary);">যোগাযোগ</h4>
+        <p style="font-size:0.85rem; line-height:1.6; color:var(--text-muted);">
+          ইমেইল: news@example.com<br>
+          ফোন: +৮৮০ ১২৩৪ ৫৬৭৮৯০<br>
+          ঢাকা, বাংলাদেশ।
+        </p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <?php echo date('Y'); ?> <?php bloginfo('name'); ?>। সর্বস্বত্ব সংরক্ষিত।</p>
+    </div>
+  </div>
+</footer>
+
+<?php wp_footer(); ?>
+</body>
+</html>

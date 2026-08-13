@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" fill="none">
+  <rect width="800" height="450" fill="#E2E8F0"/>
+  <rect width="800" height="450" fill="url(#paint0_linear)" fill-opacity="0.4"/>
+  <path d="M360 200L400 160L440 200L480 150L520 200V270H280V240L320 200L360 240Z" fill="#CBD5E1"/>
+  <circle cx="340" cy="160" r="20" fill="#94A3B8"/>
+  <text x="400" y="320" font-family="'Hind Siliguri', sans-serif" font-size="24" font-weight="600" fill="#64748B" text-anchor="middle">ProthomNews Portal</text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="800" y2="450" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F1F5F9"/>
+      <stop offset="1" stop-color="#CBD5E1"/>
+    </linearGradient>
+  </defs>
+</svg>

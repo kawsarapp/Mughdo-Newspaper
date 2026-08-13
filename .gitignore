@@ -1,0 +1,9 @@
+# WordPress Theme Git Ignore
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+node_modules/
+.vscode/
+.idea/
