@@ -1,8 +1,36 @@
-# 📰 Mughdo Newspaper - Prothom Alo Style WordPress Theme
+# 📰 Mughdo Newspaper - WordPress Theme Repository
 
 **Mughdo Newspaper** is a modern, ultra-fast, Single Page Application (SPA) Bengali News & Magazine WordPress Theme designed for high-traffic digital portals, blogs, and online news agencies.
 
 Developed by **Kawsar Ahmed**.
+
+---
+
+## 📂 Repository Structure
+
+```
+Mughdo-Newspaper/
+├── 📁 mughdo-newspaper/       # Main WordPress Theme Folder
+│   ├── style.css              # Theme Stylesheet & Header Metadata
+│   ├── functions.php          # Theme Functions & Module Setup
+│   ├── header.php             # Portal Header Template & SPA Bar
+│   ├── footer.php             # Footer & SPA Container Close
+│   ├── single.php             # Single Article View (Reactions, Bio, TTS)
+│   ├── index.php              # Dynamic Homepage Preset Router
+│   ├── comments.php           # Bengali Comments Form Template
+│   ├── 📁 inc/                # 11 Custom Theme Engine Modules
+│   ├── 📁 assets/             # CSS, JS (SPA Router Engine), SVG Graphics
+│   ├── 📁 template-parts/     # 23 Layout Block Templates
+│   ├── 📁 page-templates/     # Homepage 1, Homepage 2, Homepage 3 Presets
+│   └── 📁 languages/          # i18n Translation Catalog (.pot)
+│
+├── 📁 mughdo-newspaper-child/ # Child Theme Package Folder
+│   ├── style.css              # Child Theme Header Metadata (Template: mughdo-newspaper)
+│   └── functions.php          # Child Theme Functions
+│
+├── README.md                  # GitHub Repository Documentation
+└── .gitignore                 # Git Ignore Configuration
+```
 
 ---
 
@@ -26,18 +54,26 @@ Developed by **Kawsar Ahmed**.
   - Article Print & Copy Link tools
   - Author Bio Card & Next/Prev Article Navigation
 - **SEO & Google Snippets**: Built-in Google Schema.org JSON-LD structured data engine.
-- **i18n Ready**: Includes `languages/mughdo-newspaper.pot`.
-- **Child Theme Package**: Includes `prothom-news-child/` package.
 
 ---
 
 ## 📥 Installation Guide
 
-1. Download or clone this repository.
-2. Zip the contents into `mughdo-newspaper.zip`.
-3. Go to **WordPress Admin -> Appearance -> Themes -> Add New -> Upload Theme**.
-4. Select `mughdo-newspaper.zip` and click **Install Now**.
-5. Activate **Mughdo Newspaper**.
+### Option 1: Install Main Theme via WP Admin
+1. Compress the `mughdo-newspaper/` folder into `mughdo-newspaper.zip`.
+2. Go to **WordPress Admin -> Appearance -> Themes -> Add New -> Upload Theme**.
+3. Upload `mughdo-newspaper.zip` and click **Install Now**.
+4. Activate **Mughdo Newspaper**.
+
+### Option 2: Install via Git Clone
+Clone this repository directly into your WordPress `wp-content/themes/` directory:
+```bash
+cd wp-content/themes/
+git clone https://github.com/kawsarapp/Mughdo-Newspaper.git
+mv Mughdo-Newspaper/mughdo-newspaper .
+mv Mughdo-Newspaper/mughdo-newspaper-child .
+rm -rf Mughdo-Newspaper
+```
 
 ---
 
@@ -51,5 +87,5 @@ Developed by **Kawsar Ahmed**.
 
 ## 📄 License
 
-Distributed under the GNU General Public License v2 or later. See `LICENSE` for details.
+Distributed under the GNU General Public License v2 or later.
 Copyright © 2026 **Kawsar Ahmed**.
