@@ -1,63 +1,68 @@
 <?php
 /**
- * Audio Podcast News Player Block Component
+ * Audio Podcast Player Layout Component
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-$block_id = isset($args['block_id']) ? $args['block_id'] : 'block_5';
-$cat_id   = get_theme_mod("cat_{$block_id}", 0);
-$custom_title = get_theme_mod("title_{$block_id}", '');
-$posts_count  = get_theme_mod("posts_count_{$block_id}", 3);
+$cat_id       = isset($args['cat_id']) ? intval($args['cat_id']) : 0;
+$post_count   = isset($args['post_count']) ? intval($args['post_count']) : 3;
+$custom_title = isset($args['title']) ? $args['title'] : '';
 
-$title = !empty($custom_title) ? $custom_title : __('পডকাস্ট ও অডিও খবর', 'prothom-news');
+$title = $custom_title;
+if (empty($title) && $cat_id > 0) {
+    $cat_obj = get_category($cat_id);
+    if ($cat_obj) $title = $cat_obj->name;
+}
+if (empty($title)) {
+    $title = __('পডকাস্ট ও অডিও খবর', 'mughdo-newspaper');
+}
 
 $query_args = array(
     'post_type'      => 'post',
-    'posts_per_page' => $posts_count,
+    'posts_per_page' => $post_count,
     'post_status'    => 'publish',
 );
+
 if (!empty($cat_id) && $cat_id > 0) {
     $query_args['cat'] = $cat_id;
 }
 
 $cat_query = new WP_Query($query_args);
 
+if (!$cat_query->have_posts()) {
+    unset($query_args['cat']);
+    $cat_query = new WP_Query($query_args);
+}
+
 if ($cat_query->have_posts()) :
 ?>
 
-<section class="category-block-wrapper podcast-block-container" style="background:linear-gradient(135deg, #1E1B4B, #0F172A); padding:1.5rem; border-radius:var(--radius-lg); color:#FFF;">
-  <div class="section-header" style="border-bottom-color:#312E81;">
-    <h2 class="section-title" style="color:#FFF;">🎧 <?php echo esc_html($title); ?></h2>
+<section class="category-block-wrapper podcast-wrapper" style="background:#1E1B4B; padding:1.25rem; border-radius:var(--radius-md); color:#FFF;">
+  <div class="section-header" style="margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); pb:0.5rem;">
+    <h3 class="section-title" style="color:#818CF8;">🎙️ <?php echo esc_html($title); ?></h3>
+    <?php if ($cat_id > 0) : ?>
+      <a href="<?php echo esc_url(get_category_link($cat_id)); ?>" class="section-more-link" style="color:#A5B4FC;">সকল পডকাস্ট ➔</a>
+    <?php endif; ?>
   </div>
 
   <div class="grid-3col">
     <?php while ($cat_query->have_posts()) : $cat_query->the_post(); 
         $post_id  = get_the_ID();
         $img_url  = prothom_news_get_post_thumbnail($post_id, 'prothom-thumb-rect');
-        $time_str = ProthomNews_Bangla_Date::get_gregorian_bn(strtotime(get_the_date('Y-m-d H:i:s')));
     ?>
-      <article class="podcast-card" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius-md); padding:1rem; display:flex; flex-direction:column; gap:0.75rem;">
-        <div style="display:flex; gap:0.85rem; align-items:center;">
-          <img src="<?php echo esc_url($img_url); ?>" alt="<?php the_title_attribute(); ?>" style="width:65px; height:65px; border-radius:var(--radius-sm); object-fit:cover;" />
-          <div>
-            <span style="font-size:0.75rem; color:#A7F3D0; font-weight:700;">AUDIO EPISODE</span>
-            <h3 style="font-size:0.95rem; font-weight:700; color:#FFF; line-height:1.3;">
-              <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-            </h3>
-          </div>
+      <article class="podcast-card" style="background:rgba(255,255,255,0.06); padding:0.85rem; border-radius:var(--radius-sm);">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.6rem;">
+          <img src="<?php echo esc_url($img_url); ?>" alt="<?php the_title_attribute(); ?>" style="width:60px; height:60px; object-fit:cover; border-radius:6px;" />
+          <button style="background:#6366F1; color:#FFF; border:none; border-radius:50%; width:36px; height:36px; display:flex; align-items:center; justify-content:center; font-size:0.9rem; cursor:pointer;">▶</button>
         </div>
-        <div style="display:flex; align-items:center; gap:0.5rem; background:rgba(0,0,0,0.3); padding:0.4rem 0.8rem; border-radius:var(--radius-sm);">
-          <button class="podcast-play-btn" style="background:#10B981; color:#FFF; border:none; width:30px; height:30px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;">▶</button>
-          <div style="flex:1; height:4px; background:#374151; border-radius:2px;">
-            <div style="width:40%; height:100%; background:#10B981; border-radius:2px;"></div>
-          </div>
-          <span style="font-size:0.75rem; color:#9CA3AF;">০৫:৩০</span>
-        </div>
+        <h4 style="font-size:0.9rem; font-weight:700; color:#FFF; line-height:1.3; margin:0;">
+          <a href="<?php the_permalink(); ?>" style="color:#FFF;"><?php the_title(); ?></a>
+        </h4>
       </article>
     <?php endwhile; wp_reset_postdata(); ?>
   </div>

@@ -1,0 +1,16 @@
+{
+  "name": "Mughdo Newspaper - বাংলা নিউজ পোর্টাল",
+  "short_name": "MughdoNews",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#CC0000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/assets/images/news-national.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

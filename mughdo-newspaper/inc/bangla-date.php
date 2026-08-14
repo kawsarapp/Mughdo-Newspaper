@@ -1,12 +1,13 @@
 <?php
 /**
- * Bengali Calendar & Date Converter Helper Class for ProthomNews Theme
+ * Bengali Calendar & Date Converter Helper Class for Mughdo Newspaper Theme
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
+ * @author Kawsar Ahmed
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 class ProthomNews_Bangla_Date {
@@ -52,6 +53,13 @@ class ProthomNews_Bangla_Date {
     }
 
     /**
+     * Get Current Date in Bengali (Alias)
+     */
+    public static function get_current_bangla_date($timestamp = null) {
+        return self::get_gregorian_bn($timestamp);
+    }
+
+    /**
      * Get English Gregorian Date in Bengali Language
      * Example: শুক্রবার, ১৪ আগস্ট ২০২৬
      */
@@ -94,12 +102,9 @@ class ProthomNews_Bangla_Date {
         $is_leap_year = (($year % 4 == 0) && ($year % 100 != 0)) || ($year % 400 == 0);
 
         // Days in months in revised Bengali Calendar
-        // Boishakh to Bhadro: 31 days (5 months)
-        // Ashwin to Falgun: 30 days (6 months, Falgun 31 in leap year)
-        // Chaitra: 30 days
         $bn_month_days = array(31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30);
         if ($is_leap_year) {
-            $bn_month_days[10] = 31; // Falgun gets 31 days in leap year
+            $bn_month_days[10] = 31;
         }
 
         // Bengali year calculation (Bangla Era starting from 593 AD)
@@ -112,88 +117,87 @@ class ProthomNews_Bangla_Date {
         $bn_month_index = 0;
         $bn_day = 1;
 
-        // Approximate calculation anchor starting April 14 (Pohela Boishakh)
         if ($month == 4 && $day >= 14) {
-            $bn_month_index = 0; // Boishakh
+            $bn_month_index = 0;
             $bn_day = $day - 13;
         } elseif ($month == 4 && $day < 14) {
-            $bn_month_index = 11; // Chaitra
+            $bn_month_index = 11;
             $bn_day = $day + 16;
         } elseif ($month == 5) {
             if ($day <= 14) {
-                $bn_month_index = 0; // Boishakh
+                $bn_month_index = 0;
                 $bn_day = $day + 17;
             } else {
-                $bn_month_index = 1; // Joishtho
+                $bn_month_index = 1;
                 $bn_day = $day - 14;
             }
         } elseif ($month == 6) {
             if ($day <= 14) {
-                $bn_month_index = 1; // Joishtho
+                $bn_month_index = 1;
                 $bn_day = $day + 17;
             } else {
-                $bn_month_index = 2; // Ashar
+                $bn_month_index = 2;
                 $bn_day = $day - 14;
             }
         } elseif ($month == 7) {
             if ($day <= 15) {
-                $bn_month_index = 2; // Ashar
+                $bn_month_index = 2;
                 $bn_day = $day + 16;
             } else {
-                $bn_month_index = 3; // Srabon
+                $bn_month_index = 3;
                 $bn_day = $day - 15;
             }
         } elseif ($month == 8) {
             if ($day <= 15) {
-                $bn_month_index = 3; // Srabon
+                $bn_month_index = 3;
                 $bn_day = $day + 16;
             } else {
-                $bn_month_index = 4; // Bhadro
+                $bn_month_index = 4;
                 $bn_day = $day - 15;
             }
         } elseif ($month == 9) {
             if ($day <= 15) {
-                $bn_month_index = 4; // Bhadro
+                $bn_month_index = 4;
                 $bn_day = $day + 16;
             } else {
-                $bn_month_index = 5; // Ashwin
+                $bn_month_index = 5;
                 $bn_day = $day - 15;
             }
         } elseif ($month == 10) {
             if ($day <= 15) {
-                $bn_month_index = 5; // Ashwin
+                $bn_month_index = 5;
                 $bn_day = $day + 15;
             } else {
-                $bn_month_index = 6; // Kartrik
+                $bn_month_index = 6;
                 $bn_day = $day - 15;
             }
         } elseif ($month == 11) {
             if ($day <= 14) {
-                $bn_month_index = 6; // Kartrik
+                $bn_month_index = 6;
                 $bn_day = $day + 16;
             } else {
-                $bn_month_index = 7; // Agrahayan
+                $bn_month_index = 7;
                 $bn_day = $day - 14;
             }
         } elseif ($month == 12) {
             if ($day <= 14) {
-                $bn_month_index = 7; // Agrahayan
+                $bn_month_index = 7;
                 $bn_day = $day + 16;
             } else {
-                $bn_month_index = 8; // Poush
+                $bn_month_index = 8;
                 $bn_day = $day - 14;
             }
         } elseif ($month == 1) {
             if ($day <= 13) {
-                $bn_month_index = 8; // Poush
+                $bn_month_index = 8;
                 $bn_day = $day + 17;
             } else {
-                $bn_month_index = 9; // Magh
+                $bn_month_index = 9;
                 $bn_day = $day - 13;
             }
         } elseif ($month == 2) {
             if ($day <= 12) {
-                $bn_month_index = 9; // Magh
+                $bn_month_index = 9;
                 $bn_day = $day + 18;
             } else {
                 $bn_month_index = 10; // Falgun

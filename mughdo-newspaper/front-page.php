@@ -1,6 +1,8 @@
 <?php
 /**
- * Homepage Preset 3: Visual & Live Timeline Portal
+ * Front Page Template Router for Mughdo Newspaper
+ * Renders Custom Homepage Layouts & Presets whether WP Settings -> Reading is set to "Latest Posts" OR "A Static Page".
+ * Smart Auto-Category Distribution & Custom Title Resolver.
  *
  * @package MughdoNewspaper
  * @author Kawsar Ahmed
@@ -10,8 +12,20 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$preset = get_theme_mod('homepage_preset', 'preset_1');
+
+if ($preset === 'preset_2') {
+    get_template_part('page-templates/homepage-2');
+    return;
+} elseif ($preset === 'preset_3') {
+    get_template_part('page-templates/homepage-3');
+    return;
+}
+
+// Default: Homepage 1 (Classic Prothom Alo Grid) or Custom 20 Dynamic Section Blocks
 get_header();
 
+// Fetch all available categories to auto-distribute distinct categories if unassigned
 $all_categories = get_categories(array('hide_empty' => false));
 $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
 ?>
@@ -20,14 +34,11 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
   <div class="container">
     <div class="main-content-layout">
 
-      <!-- Live Timeline Component -->
-      <?php get_template_part('template-parts/content-category-live-timeline'); ?>
+      <!-- Lead News Grid Component -->
+      <?php get_template_part('template-parts/content-lead'); ?>
 
-      <!-- Photo Slider Carousel -->
-      <?php get_template_part('template-parts/content-category-slider-carousel'); ?>
-
-      <!-- Ad Slot: Middle Home -->
-      <?php ProthomNews_Theme_Options::render_ad('ad_middle_home', 'my-3'); ?>
+      <!-- Ad Slot: After Lead Grid -->
+      <?php ProthomNews_Theme_Options::render_ad('ad_after_lead', 'my-3'); ?>
 
       <!-- Dynamic Customizer Section Blocks Loop (1 to 20) -->
       <?php
@@ -37,13 +48,14 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
           if ($enabled) {
               $user_cat_id = get_theme_mod("cat_block_{$i}", 0);
               
+              // Smart Auto-Category Assignment if unassigned (0)
               if ($user_cat_id == 0 && $cat_count > 0) {
-                  $assigned_cat  = $all_categories[($i - 1) % $cat_count];
-                  $final_cat_id  = $assigned_cat->term_id;
+                  $assigned_cat = $all_categories[($i - 1) % $cat_count];
+                  $final_cat_id = $assigned_cat->term_id;
                   $default_title = $assigned_cat->name;
               } else {
-                  $final_cat_id  = $user_cat_id;
-                  $cat_obj       = get_category($final_cat_id);
+                  $final_cat_id = $user_cat_id;
+                  $cat_obj = get_category($final_cat_id);
                   $default_title = $cat_obj ? $cat_obj->name : '';
               }
 
@@ -65,7 +77,9 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
           return $a['order'] - $b['order'];
       });
 
+      $block_counter = 0;
       foreach ($blocks as $block) {
+          $block_counter++;
           $layout_file = 'template-parts/content-category-' . sanitize_file_name($block['layout']);
           
           get_template_part($layout_file, null, array(
@@ -74,6 +88,10 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
               'post_count'  => $block['post_count'],
               'block_index' => $block['index'],
           ));
+
+          if ($block_counter === 3) {
+              ProthomNews_Theme_Options::render_ad('ad_middle_home', 'my-4');
+          }
       }
       ?>
 

@@ -7,3 +7,7 @@ Thumbs.db
 node_modules/
 .vscode/
 .idea/
+.ddev/
+wp-config.php
+mughdo-newspaper/wp-config.php
+mughdo-newspaper/wp-config-ddev.php

@@ -1,37 +1,81 @@
 <?php
 /**
- * Template Name: Homepage 2 - ম্যাগাজিন ও ভিডিও পোর্টাল (Magazine & Video Portal)
+ * Homepage Preset 2: Magazine & Video Portal
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
+ * @author Kawsar Ahmed
  */
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 get_header();
+
+$all_categories = get_categories(array('hide_empty' => false));
+$cat_count      = !empty($all_categories) ? count($all_categories) : 0;
 ?>
 
 <main id="primary" class="site-main">
   <div class="container">
     <div class="main-content-layout">
 
-      <!-- 1. Big Magazine Hero Block -->
-      <?php get_template_part('template-parts/content-category-magazine-hero', null, array('post_count' => 7)); ?>
+      <!-- Magazine Hero Grid Component -->
+      <?php get_template_part('template-parts/content-category-magazine-hero'); ?>
 
-      <!-- Ad Slot -->
-      <?php ProthomNews_Theme_Options::render_ad('ad_after_lead', 'my-3'); ?>
+      <!-- Dynamic Video Grid -->
+      <?php get_template_part('template-parts/content-category-video-grid'); ?>
 
-      <!-- 2. Video Grid Spotlight Block -->
-      <?php get_template_part('template-parts/content-category-video-grid', null, array('post_count' => 4, 'title' => '🎥 ভিডিও সংবাদের বিশেষ আয়োজন')); ?>
+      <!-- Ad Slot: Middle Home -->
+      <?php ProthomNews_Theme_Options::render_ad('ad_middle_home', 'my-3'); ?>
 
-      <!-- 3. Sub-category Tabbed News Block -->
-      <?php get_template_part('template-parts/content-category-tabbed-cat', null, array('post_count' => 6)); ?>
+      <!-- Dynamic Customizer Section Blocks Loop (1 to 20) -->
+      <?php
+      $blocks = array();
+      for ($i = 1; $i <= 20; $i++) {
+          $enabled = get_theme_mod("enable_block_{$i}", ($i <= 12) ? 1 : 0);
+          if ($enabled) {
+              $user_cat_id = get_theme_mod("cat_block_{$i}", 0);
+              
+              if ($user_cat_id == 0 && $cat_count > 0) {
+                  $assigned_cat  = $all_categories[($i - 1) % $cat_count];
+                  $final_cat_id  = $assigned_cat->term_id;
+                  $default_title = $assigned_cat->name;
+              } else {
+                  $final_cat_id  = $user_cat_id;
+                  $cat_obj       = get_category($final_cat_id);
+                  $default_title = $cat_obj ? $cat_obj->name : '';
+              }
 
-      <!-- 4. 2-Column Split Magazine Block -->
-      <?php get_template_part('template-parts/content-category-2col-split', null, array('post_count' => 6)); ?>
+              $user_title  = get_theme_mod("title_block_{$i}", '');
+              $final_title = !empty($user_title) ? $user_title : $default_title;
 
-      <!-- 5. Editorial Spotlight Banner -->
-      <?php get_template_part('template-parts/content-category-editorial-spotlight', null, array('post_count' => 1)); ?>
+              $blocks[] = array(
+                  'index'      => $i,
+                  'cat_id'     => $final_cat_id,
+                  'title'      => $final_title,
+                  'layout'     => get_theme_mod("layout_block_{$i}", '3col'),
+                  'post_count' => get_theme_mod("count_block_{$i}", 6),
+                  'order'      => get_theme_mod("order_block_{$i}", $i),
+              );
+          }
+      }
 
-      <!-- 6. Opinion Columnists Grid -->
-      <?php get_template_part('template-parts/content-category-opinion', null, array('post_count' => 4)); ?>
+      usort($blocks, function($a, $b) {
+          return $a['order'] - $b['order'];
+      });
+
+      foreach ($blocks as $block) {
+          $layout_file = 'template-parts/content-category-' . sanitize_file_name($block['layout']);
+          
+          get_template_part($layout_file, null, array(
+              'cat_id'      => $block['cat_id'],
+              'title'       => $block['title'],
+              'post_count'  => $block['post_count'],
+              'block_index' => $block['index'],
+          ));
+      }
+      ?>
 
     </div>
   </div>

@@ -1,18 +1,17 @@
 <?php
 /**
- * Dynamic Video News Grid Component
+ * Video Play-Icon Grid Layout Component
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-$block_id = isset($args['block_id']) ? $args['block_id'] : 'block_5';
-$cat_id   = get_theme_mod("cat_{$block_id}", 0);
-$custom_title = get_theme_mod("title_{$block_id}", '');
-$posts_count  = get_theme_mod("posts_count_{$block_id}", 4);
+$cat_id       = isset($args['cat_id']) ? intval($args['cat_id']) : 0;
+$post_count   = isset($args['post_count']) ? intval($args['post_count']) : 4;
+$custom_title = isset($args['title']) ? $args['title'] : '';
 
 $title = $custom_title;
 if (empty($title) && $cat_id > 0) {
@@ -20,28 +19,34 @@ if (empty($title) && $cat_id > 0) {
     if ($cat_obj) $title = $cat_obj->name;
 }
 if (empty($title)) {
-    $title = __('ভিডিও নিউজ', 'prothom-news');
+    $title = __('ভিডিও খবর (Video News)', 'mughdo-newspaper');
 }
 
 $query_args = array(
     'post_type'      => 'post',
-    'posts_per_page' => $posts_count,
+    'posts_per_page' => $post_count,
     'post_status'    => 'publish',
 );
+
 if (!empty($cat_id) && $cat_id > 0) {
     $query_args['cat'] = $cat_id;
 }
 
 $cat_query = new WP_Query($query_args);
 
+if (!$cat_query->have_posts()) {
+    unset($query_args['cat']);
+    $cat_query = new WP_Query($query_args);
+}
+
 if ($cat_query->have_posts()) :
 ?>
 
-<section class="category-block-wrapper video-section-container" style="background:#0F172A; padding:1.5rem; border-radius:var(--radius-lg); color:#FFF;">
-  <div class="section-header" style="border-bottom-color:#334155;">
-    <h2 class="section-title" style="color:#FFF;">🔴 <?php echo esc_html($title); ?></h2>
+<section class="category-block-wrapper video-grid-wrapper" style="background:#0F172A; padding:1.25rem; border-radius:var(--radius-md); color:#FFF;">
+  <div class="section-header" style="margin-bottom:1rem; border-bottom:1px solid rgba(255,255,255,0.1); pb:0.5rem;">
+    <h3 class="section-title" style="color:#EF4444;">🎬 <?php echo esc_html($title); ?></h3>
     <?php if ($cat_id > 0) : ?>
-      <a href="<?php echo esc_url(get_category_link($cat_id)); ?>" class="section-more-link" style="color:#38BDF8;"><?php esc_html_e('সব ভিডিও →', 'prothom-news'); ?></a>
+      <a href="<?php echo esc_url(get_category_link($cat_id)); ?>" class="section-more-link" style="color:#FCA5A5;">সব ভিডিও ➔</a>
     <?php endif; ?>
   </div>
 
@@ -49,21 +54,19 @@ if ($cat_query->have_posts()) :
     <?php while ($cat_query->have_posts()) : $cat_query->the_post(); 
         $post_id  = get_the_ID();
         $img_url  = prothom_news_get_post_thumbnail($post_id, 'prothom-thumb-rect');
-        $time_str = ProthomNews_Bangla_Date::get_gregorian_bn(strtotime(get_the_date('Y-m-d H:i:s')));
     ?>
-      <article class="video-card">
-        <div class="video-thumb-wrapper">
-          <a href="<?php the_permalink(); ?>">
-            <img src="<?php echo esc_url($img_url); ?>" alt="<?php the_title_attribute(); ?>" loading="lazy" />
-            <span class="video-play-icon">▶</span>
-          </a>
-        </div>
-        <div style="padding:0.75rem 0;">
-          <h3 class="video-card-title">
-            <a href="<?php the_permalink(); ?>" style="color:#FFF; font-size:0.95rem; font-weight:600; line-height:1.35;"><?php the_title(); ?></a>
-          </h3>
-          <span style="font-size:0.75rem; color:#94A3B8; display:block; margin-top:0.3rem;">🕒 <?php echo esc_html($time_str); ?></span>
-        </div>
+      <article class="video-card" style="position:relative; border-radius:6px; overflow:hidden;">
+        <a href="<?php the_permalink(); ?>">
+          <div style="position:relative; aspect-ratio:16/9;">
+            <img src="<?php echo esc_url($img_url); ?>" alt="<?php the_title_attribute(); ?>" style="width:100%; height:100%; object-fit:cover;" loading="lazy" />
+            <div style="position:absolute; inset:0; background:rgba(0,0,0,0.35); display:flex; align-items:center; justify-content:center;">
+              <div style="width:40px; height:40px; background:#EF4444; color:#FFF; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; padding-left:3px; box-shadow:0 0 12px rgba(239,68,68,0.6);">▶</div>
+            </div>
+          </div>
+          <h4 style="font-size:0.85rem; font-weight:700; color:#FFF; margin-top:0.5rem; line-height:1.3;">
+            <?php the_title(); ?>
+          </h4>
+        </a>
       </article>
     <?php endwhile; wp_reset_postdata(); ?>
   </div>

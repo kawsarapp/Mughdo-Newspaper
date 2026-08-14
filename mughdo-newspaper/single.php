@@ -1,9 +1,10 @@
 <?php
 /**
- * Single News Post Template for ProthomNews
- * Rich Post Experience: Dynamic Review Box Position, Reader Reactions, Author Bio, Next/Prev Nav, Print & Copy Link.
+ * Single News Post Template for Mughdo Newspaper
+ * Rich Post Experience: Dynamic Review Box Position, Customizer Meta Toggles, Bookmark System, TTS Voice Reader, Reader Reactions.
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
+ * @author Kawsar Ahmed
  */
 
 get_header();
@@ -18,6 +19,13 @@ if (have_posts()) : while (have_posts()) : the_post();
     $author_name     = get_the_author();
     $author_desc     = get_the_author_meta('description');
 
+    // Customizer Toggles
+    $show_category   = get_theme_mod('enable_post_category', 1);
+    $show_author     = get_theme_mod('enable_post_author', 1);
+    $show_date       = get_theme_mod('enable_post_date', 1);
+    $show_read_time  = get_theme_mod('enable_reading_time', 1);
+    $show_bookmark   = get_theme_mod('enable_bookmark_system', 1);
+
     $review_global   = get_theme_mod('enable_global_review', 1);
     $review_pos      = get_theme_mod('review_position', 'above_hero');
 ?>
@@ -30,7 +38,7 @@ if (have_posts()) : while (have_posts()) : the_post();
       
       <!-- Category Badge & Breadcrumb -->
       <div class="article-header">
-        <?php if ($primary_cat) : ?>
+        <?php if ($show_category && $primary_cat) : ?>
           <div class="article-category-title">
             <a href="<?php echo esc_url(get_category_link($primary_cat->term_id)); ?>">
               <?php echo esc_html($primary_cat->name); ?>
@@ -41,22 +49,37 @@ if (have_posts()) : while (have_posts()) : the_post();
         <!-- Headline -->
         <h1 class="article-main-title"><?php the_title(); ?></h1>
 
-        <!-- Meta Info -->
-        <div class="article-meta-bar">
-          <div>
-            <span>✍️ <?php echo esc_html($author_name); ?></span> | 
-            <span>🕒 প্রকাশিত: <?php echo esc_html($bn_date); ?></span>
+        <!-- Meta Info Bar (Conditionally Toggled) -->
+        <?php if ($show_author || $show_date || $show_read_time) : ?>
+          <div class="article-meta-bar">
+            <div>
+              <?php if ($show_author) : ?>
+                <span>✍️ <?php echo esc_html($author_name); ?></span>
+              <?php endif; ?>
+              
+              <?php if ($show_author && $show_date) : ?> | <?php endif; ?>
+
+              <?php if ($show_date) : ?>
+                <span>🕒 প্রকাশিত: <?php echo esc_html($bn_date); ?></span>
+              <?php endif; ?>
+            </div>
+            
+            <?php if ($show_read_time) : ?>
+              <div>
+                <span>⏱️ <?php echo esc_html($reading_time); ?></span>
+              </div>
+            <?php endif; ?>
           </div>
-          <div>
-            <span>⏱️ <?php echo esc_html($reading_time); ?></span>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
 
-      <!-- Reader Tools Bar (Font Resizer, Audio TTS Player, Print, Copy Link) -->
+      <!-- Reader Tools Bar (Font Resizer, Audio TTS Player, Bookmark, Print, Copy Link) -->
       <div class="reader-tools-bar">
         <span style="font-weight:700; font-size:0.85rem; color:var(--text-muted);">পাঠক টুলস:</span>
         <button id="tts-play-btn" class="tool-btn">🔊 <span>খবর শুনুন</span></button>
+        <?php if ($show_bookmark) : ?>
+          <button id="bookmark-article-btn" class="tool-btn" data-post-id="<?php echo esc_attr($post_id); ?>" data-title="<?php echo esc_attr(get_the_title()); ?>" data-url="<?php echo esc_url(get_permalink()); ?>">📌 <span>বুকমার্ক করুন</span></button>
+        <?php endif; ?>
         <button onclick="window.print();" class="tool-btn">🖨️ <span>প্রিন্ট</span></button>
         <button id="copy-link-btn" class="tool-btn" data-url="<?php echo esc_url(get_permalink()); ?>">📋 <span>লিংক কপি</span></button>
         
@@ -140,16 +163,18 @@ if (have_posts()) : while (have_posts()) : the_post();
         <a href="https://api.whatsapp.com/send?text=<?php echo urlencode(get_the_title() . ' - ' . get_permalink()); ?>" target="_blank" rel="noopener" class="share-btn share-wa">💬 WhatsApp</a>
       </div>
 
-      <!-- Author Bio Box -->
-      <div class="author-bio-card">
-        <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/author-avatar.svg'); ?>" alt="<?php echo esc_attr($author_name); ?>" class="author-bio-avatar" />
-        <div class="author-bio-info">
-          <h4 class="author-bio-name"><?php echo esc_html($author_name); ?></h4>
-          <p class="author-bio-desc">
-            <?php echo esc_html($author_desc ? $author_desc : 'ProthomNews-এর জ্যেষ্ঠ সাংবাদিক ও রিপোর্টার। দেশ ও আন্তর্জাতিক খবর নিয়ে নিয়মিত প্রতিবেদন লিখছেন।'); ?>
-          </p>
+      <!-- Author Bio Card (Toggled with Author Name) -->
+      <?php if ($show_author) : ?>
+        <div class="author-bio-card">
+          <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/author-avatar.svg'); ?>" alt="<?php echo esc_attr($author_name); ?>" class="author-bio-avatar" />
+          <div class="author-bio-info">
+            <h4 class="author-bio-name"><?php echo esc_html($author_name); ?></h4>
+            <p class="author-bio-desc">
+              <?php echo esc_html($author_desc ? $author_desc : 'Mughdo Newspaper-এর জ্যেষ্ঠ সাংবাদিক ও রিপোর্টার। দেশ ও আন্তর্জাতিক খবর নিয়ে নিয়মিত প্রতিবেদন লিখছেন।'); ?>
+            </p>
+          </div>
         </div>
-      </div>
+      <?php endif; ?>
 
       <!-- Next / Previous Article Navigation Bar -->
       <div class="next-prev-nav-bar">

@@ -1,14 +1,16 @@
 /**
- * ProthomNews App Engine - Client Features & Mobile Controls
- * Controls Dark Mode, Live Search Modal with Keyboard Navigation, Mobile Off-Canvas Drawer, Mobile App Bottom Bar, TTS, Copy Link, Reader Reactions, and Tabs.
+ * Mughdo Newspaper App Engine - Client Features & Mobile Controls
+ * Controls Dark Mode, Live Search Modal with Bengali Voice Search, Mobile Off-Canvas Drawer, Mobile App Bottom Bar, TTS, Copy Link, Reader Reactions, Bookmarks, and Tabs.
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
+ * @author Kawsar Ahmed
  */
 
 const ProthomNewsApp = {
   init() {
     this.initDarkMode();
     this.initLiveSearch();
+    this.initVoiceSearch();
     this.initTrendingTabs();
     this.initFontResizer();
     this.initVoiceReader();
@@ -17,6 +19,7 @@ const ProthomNewsApp = {
     this.initMobileDrawer();
     this.initSubCatTabs();
     this.initReaderReactions();
+    this.initBookmarkSystem();
   },
 
   /**
@@ -30,6 +33,7 @@ const ProthomNewsApp = {
     this.initAdDismiss();
     this.initSubCatTabs();
     this.initReaderReactions();
+    this.initBookmarkSystem();
   },
 
   /**
@@ -70,7 +74,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 2. Live Search Modal with REST API Autocomplete & Keyboard Arrow Navigation
+   * 2. Live Search Modal with REST API Autocomplete & Keyboard Navigation
    */
   initLiveSearch() {
     const triggerBtn = document.getElementById('search-trigger-btn');
@@ -186,7 +190,81 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 3. Copy Link Helper
+   * 3. Bengali Speech-to-Text Voice Search Engine
+   */
+  initVoiceSearch() {
+    const voiceBtn = document.getElementById('voice-search-btn');
+    const searchInput = document.getElementById('live-search-input');
+
+    if (!voiceBtn || !searchInput) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      voiceBtn.style.display = 'none';
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'bn-BD';
+    recognition.continuous = false;
+
+    voiceBtn.addEventListener('click', () => {
+      voiceBtn.innerText = '🎙️ শুনছি... (কথা বলুন)';
+      recognition.start();
+    });
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      searchInput.value = transcript;
+      searchInput.dispatchEvent(new Event('input'));
+      voiceBtn.innerText = '🎤 ভয়েস সার্চ';
+    };
+
+    recognition.onerror = () => {
+      voiceBtn.innerText = '🎤 ভয়েস সার্চ';
+    };
+  },
+
+  /**
+   * 4. Article Bookmark & "Read Later" System
+   */
+  initBookmarkSystem() {
+    const bookmarkBtn = document.getElementById('bookmark-article-btn');
+    if (!bookmarkBtn) return;
+
+    const postId = bookmarkBtn.getAttribute('data-post-id');
+    const postTitle = bookmarkBtn.getAttribute('data-title');
+    const postUrl = bookmarkBtn.getAttribute('data-url');
+    const storageKey = 'mughdo_bookmarks';
+
+    let bookmarks = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    const isBookmarked = bookmarks.some(b => b.id === postId);
+
+    if (isBookmarked) {
+      bookmarkBtn.innerHTML = '📌 <span>বুকমার্ক করা রয়েছে</span>';
+      bookmarkBtn.classList.add('active');
+    }
+
+    bookmarkBtn.addEventListener('click', () => {
+      bookmarks = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      const index = bookmarks.findIndex(b => b.id === postId);
+
+      if (index > -1) {
+        bookmarks.splice(index, 1);
+        bookmarkBtn.innerHTML = '📌 <span>বুকমার্ক করুন</span>';
+        bookmarkBtn.classList.remove('active');
+      } else {
+        bookmarks.push({ id: postId, title: postTitle, url: postUrl });
+        bookmarkBtn.innerHTML = '📌 <span>বুকমার্ক করা হয়েছে</span>';
+        bookmarkBtn.classList.add('active');
+      }
+
+      localStorage.setItem(storageKey, JSON.stringify(bookmarks));
+    });
+  },
+
+  /**
+   * 5. Copy Link Helper
    */
   initCopyLink() {
     const copyBtn = document.getElementById('copy-link-btn');
@@ -207,7 +285,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 4. Interactive Reader Reaction Buttons
+   * 6. Interactive Reader Reaction Buttons
    */
   initReaderReactions() {
     const reactionBtns = document.querySelectorAll('.reaction-btn');
@@ -233,7 +311,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 5. Mobile Off-Canvas Drawer Menu Controls
+   * 7. Mobile Off-Canvas Drawer Menu Controls
    */
   initMobileDrawer() {
     const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
@@ -267,7 +345,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 6. Interactive Sub-Category Tabs Filter
+   * 8. Interactive Sub-Category Tabs Filter
    */
   initSubCatTabs() {
     const tabBtns = document.querySelectorAll('.sub-tab-btn');
@@ -284,7 +362,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 7. Tab Switcher for Trending Widget
+   * 9. Tab Switcher for Trending Widget
    */
   initTrendingTabs() {
     const tabBtns = document.querySelectorAll('.trending-tabs .tab-btn');
@@ -307,7 +385,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 8. Font Resizer (+A / -A) for Post Content
+   * 10. Font Resizer (+A / -A) for Post Content
    */
   initFontResizer() {
     const articleBody = document.querySelector('.article-body-content');
@@ -346,7 +424,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 9. Bengali Text-to-Speech (Voice Reader)
+   * 11. Bengali Text-to-Speech (Voice Reader)
    */
   initVoiceReader() {
     const ttsBtn = document.getElementById('tts-play-btn');
@@ -386,7 +464,7 @@ const ProthomNewsApp = {
   },
 
   /**
-   * 10. Sticky Bottom Ad Dismiss
+   * 12. Sticky Bottom Ad Dismiss
    */
   initAdDismiss() {
     const closeBtn = document.querySelector('.ad-sticky-bottom .ad-close-btn');

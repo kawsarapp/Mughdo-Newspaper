@@ -2,23 +2,24 @@
 /**
  * Overlay Gradient Cards Visual Layout Component
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-$cat_id     = isset($args['cat_id']) ? $args['cat_id'] : 0;
-$post_count = isset($args['post_count']) ? $args['post_count'] : 4;
-$title      = isset($args['title']) ? $args['title'] : '';
+$cat_id       = isset($args['cat_id']) ? intval($args['cat_id']) : 0;
+$post_count   = isset($args['post_count']) ? intval($args['post_count']) : 4;
+$custom_title = isset($args['title']) ? $args['title'] : '';
 
+$title = $custom_title;
 if (empty($title) && $cat_id > 0) {
     $cat_obj = get_category($cat_id);
     if ($cat_obj) $title = $cat_obj->name;
 }
 if (empty($title)) {
-    $title = __('বিজ্ঞান ও প্রযুক্তি', 'prothom-news');
+    $title = __('বিজ্ঞান ও প্রযুক্তি', 'mughdo-newspaper');
 }
 
 $query_args = array(
@@ -32,6 +33,12 @@ if (!empty($cat_id) && $cat_id > 0) {
 }
 
 $cat_query = new WP_Query($query_args);
+
+// Fallback if selected category has 0 posts in database
+if (!$cat_query->have_posts()) {
+    unset($query_args['cat']);
+    $cat_query = new WP_Query($query_args);
+}
 
 if ($cat_query->have_posts()) :
 ?>
@@ -59,7 +66,7 @@ if ($cat_query->have_posts()) :
           <h4 class="overlay-card-title">
             <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
           </h4>
-          <span style="font-size:0.75rem; color:#E2E8F0;">🕒 <?php echo esc_html($time_str); ?></span>
+          <span class="overlay-meta">🕒 <?php echo esc_html($time_str); ?></span>
         </div>
       </article>
     <?php endwhile; wp_reset_postdata(); ?>

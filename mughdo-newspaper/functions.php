@@ -22,6 +22,13 @@ require_get_template_directory('/inc/widgets.php');
 require_get_template_directory('/inc/demo-importer.php');
 require_get_template_directory('/inc/license-system.php');
 
+// Include 7 Enterprise Modules
+require_get_template_directory('/inc/weather-aqi.php');
+require_get_template_directory('/inc/stock-currency.php');
+require_get_template_directory('/inc/prayer-ramadan.php');
+require_get_template_directory('/inc/sports-scorecard.php');
+require_get_template_directory('/inc/pwa-engine.php');
+
 function require_get_template_directory($file) {
     require_once get_template_directory() . $file;
 }
@@ -98,7 +105,7 @@ function mughdo_newspaper_enqueue_assets() {
     // SPA Router Engine JavaScript
     wp_enqueue_script('prothom-news-spa', get_template_directory_uri() . '/assets/js/spa-router.js', array(), $theme_version, true);
 
-    // Main App Logic (Search, Dark Mode, Font Resizer, Voice Reader, Keyboard Navigation, Reader Reactions)
+    // Main App Logic
     wp_enqueue_script('prothom-news-app', get_template_directory_uri() . '/assets/js/app.js', array(), $theme_version, true);
 
     // Localize Data for Frontend Scripts
@@ -110,6 +117,59 @@ function mughdo_newspaper_enqueue_assets() {
     ));
 }
 add_action('wp_enqueue_scripts', 'mughdo_newspaper_enqueue_assets');
+
+/**
+ * Typography & Custom Fonts Engine
+ */
+function mughdo_newspaper_custom_fonts() {
+    $heading_font = get_theme_mod('heading_font', 'solaimanlipi');
+    $body_font    = get_theme_mod('body_font', 'solaimanlipi');
+    $custom_url   = get_theme_mod('custom_font_url', '');
+
+    $fonts_map = array(
+        'solaimanlipi'       => "'SolaimanLipi', 'Hind Siliguri', sans-serif",
+        'hind_siliguri'      => "'Hind Siliguri', 'SolaimanLipi', sans-serif",
+        'noto_serif_bengali' => "'Noto Serif Bengali', serif",
+        'noto_sans_bengali'  => "'Noto Sans Bengali', sans-serif",
+        'kalpurush'          => "'Kalpurush', sans-serif",
+        'tiro_bangla'        => "'Tiro Bangla', serif",
+        'mina'               => "'Mina', sans-serif",
+        'outfit'             => "'Outfit', sans-serif",
+        'inter'              => "'Inter', sans-serif",
+        'system'             => "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        'custom'             => "CustomFont, sans-serif",
+    );
+
+    $heading_ff = isset($fonts_map[$heading_font]) ? $fonts_map[$heading_font] : $fonts_map['solaimanlipi'];
+    $body_ff    = isset($fonts_map[$body_font]) ? $fonts_map[$body_font] : $fonts_map['solaimanlipi'];
+
+    echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
+    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+    echo '<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Inter:wght@400;600;700&family=Mina:wght@400;700&family=Noto+Sans+Bengali:wght@400;600;700&family=Noto+Serif+Bengali:wght@400;700&family=Outfit:wght@400;600;700&family=Tiro+Bangla&display=swap" rel="stylesheet">' . "\n";
+
+    echo '<link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">' . "\n";
+    echo '<link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">' . "\n";
+
+    if (!empty($custom_url)) {
+        echo '<link href="' . esc_url($custom_url) . '" rel="stylesheet">' . "\n";
+    }
+
+    ?>
+    <style id="mughdo-custom-typography">
+      :root {
+        --font-heading: <?php echo $heading_ff; ?>;
+        --font-body: <?php echo $body_ff; ?>;
+      }
+      body, p, li, input, textarea, select, button {
+        font-family: var(--font-body) !important;
+      }
+      h1, h2, h3, h4, h5, h6, .news-card-title, .lead-hero-title, .section-title, .entry-title {
+        font-family: var(--font-heading) !important;
+      }
+    </style>
+    <?php
+}
+add_action('wp_head', 'mughdo_newspaper_custom_fonts', 2);
 
 /**
  * Dynamic Post Thumbnail Helper with Category Fallback Graphics

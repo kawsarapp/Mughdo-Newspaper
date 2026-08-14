@@ -138,6 +138,14 @@ ul, ol {
   align-items: center;
   gap: 1rem;
   font-weight: 500;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  scrollbar-width: none;
+}
+.date-weather-display::-webkit-scrollbar {
+  display: none;
 }
 
 .date-weather-display .bn-date {
@@ -244,6 +252,69 @@ ul, ol {
 .primary-menu li.current-menu-item > a {
   color: var(--brand-red);
   background-color: var(--bg-secondary);
+}
+
+/* Multi-Level Submenu Dropdown System (Level 1, 2, 3 Sub-submenus) */
+.primary-menu li {
+  position: relative;
+}
+
+.primary-menu .sub-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0;
+  margin: 0;
+  display: none;
+  z-index: 1000;
+}
+
+.primary-menu li:hover > .sub-menu {
+  display: block;
+}
+
+.primary-menu .sub-menu li {
+  width: 100%;
+}
+
+.primary-menu .sub-menu a {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.primary-menu .sub-menu a:hover {
+  background-color: var(--bg-secondary);
+  color: var(--brand-red);
+}
+
+/* Level 2 & Level 3 Sub-submenus (Flyout to the right) */
+.primary-menu .sub-menu .sub-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+}
+
+.primary-menu li.menu-item-has-children > a::after {
+  content: ' ▾';
+  font-size: 0.8rem;
+  margin-left: 0.4rem;
+}
+
+.primary-menu .sub-menu li.menu-item-has-children > a::after {
+  content: ' ▸';
+  font-size: 0.8rem;
+  margin-left: auto;
 }
 
 .search-trigger-btn {
