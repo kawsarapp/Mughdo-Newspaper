@@ -1,7 +1,7 @@
 <?php
 /**
  * Header Template for Mughdo Newspaper
- * Dynamic Topbar Widgets (Weather, Currency, Prayer, Sports), SPA Progress Indicator, Main Navigation & Live Search Modal with Bengali Voice Search.
+ * Clean Navigation Bar Layout, Multi-level Submenu Dropdowns, Dynamic Topbar Widgets, Single Article Reading Progress Bar, SPA Progress Indicator & Live Search Modal with Bengali Voice Search.
  *
  * @package MughdoNewspaper
  * @author Kawsar Ahmed
@@ -27,6 +27,9 @@ $bn_date = ProthomNews_Bangla_Date::get_current_bangla_date();
 </head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
+
+<!-- Single Article Scroll Reading Progress Bar -->
+<div id="article-reading-progress" class="article-reading-progress"></div>
 
 <!-- SPA Top Loading Progress Bar -->
 <div id="spa-progress-bar"></div>
@@ -82,34 +85,45 @@ $bn_date = ProthomNews_Bangla_Date::get_current_bangla_date();
     </div>
   </div>
 
-  <!-- Sticky Main Navigation Bar -->
+  <!-- Sticky Main Navigation Bar (Fully Responsive PC, Laptop, Tab & Mobile) -->
   <nav class="main-nav-bar" role="navigation" aria-label="Main Navigation">
     <div class="container nav-wrapper">
+      
+      <!-- Mobile Only Elements: Hamburger Trigger + Mobile Sticky Logo -->
       <button id="mobile-menu-trigger" class="mobile-menu-trigger" aria-label="Open Mobile Menu">☰</button>
       
-      <?php
-      if (has_nav_menu('primary')) {
-          wp_nav_menu(array(
-              'theme_location' => 'primary',
-              'container'      => false,
-              'menu_class'     => 'primary-menu',
-              'fallback_cb'    => false,
-          ));
-      } else {
-          echo '<ul class="primary-menu">';
-          echo '<li><a href="' . esc_url(home_url('/')) . '">প্রচ্ছদ</a></li>';
-          $top_cats = get_categories(array('number' => 9, 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => false));
-          foreach ($top_cats as $cat) {
-              if ($cat->slug === 'uncategorized') continue;
-              echo '<li><a href="' . esc_url(get_category_link($cat->term_id)) . '">' . esc_html($cat->name) . '</a></li>';
-          }
-          echo '</ul>';
-      }
-      ?>
+      <a href="<?php echo esc_url(home_url('/')); ?>" class="mobile-nav-logo">
+        <?php bloginfo('name'); ?>
+      </a>
 
+      <!-- Primary Desktop Menu -->
+      <div class="desktop-menu-container">
+        <?php
+        if (has_nav_menu('primary')) {
+            wp_nav_menu(array(
+                'theme_location' => 'primary',
+                'container'      => false,
+                'menu_class'     => 'primary-menu',
+                'fallback_cb'    => false,
+            ));
+        } else {
+            echo '<ul class="primary-menu">';
+            echo '<li><a href="' . esc_url(home_url('/')) . '">প্রচ্ছদ</a></li>';
+            $top_cats = get_categories(array('number' => 8, 'orderby' => 'count', 'order' => 'DESC', 'hide_empty' => false));
+            foreach ($top_cats as $cat) {
+                if ($cat->slug === 'uncategorized') continue;
+                echo '<li><a href="' . esc_url(get_category_link($cat->term_id)) . '">' . esc_html($cat->name) . '</a></li>';
+            }
+            echo '</ul>';
+        }
+        ?>
+      </div>
+
+      <!-- Right Search Trigger Button -->
       <button id="search-trigger-btn" class="search-trigger-btn" aria-label="Search Portal">
         🔍
       </button>
+
     </div>
   </nav>
 

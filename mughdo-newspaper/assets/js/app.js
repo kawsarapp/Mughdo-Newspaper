@@ -1,6 +1,6 @@
 /**
  * Mughdo Newspaper App Engine - Client Features & Mobile Controls
- * Controls Dark Mode, Live Search Modal with Bengali Voice Search, Mobile Off-Canvas Drawer, Mobile App Bottom Bar, TTS, Copy Link, Reader Reactions, Bookmarks, and Tabs.
+ * Controls Dark Mode, Live Search Modal with Bengali Voice Search, Mobile Off-Canvas Drawer, Mobile App Bottom Bar, TTS, Copy Link, Reader Reactions, Bookmarks, Reading Progress Bar & Floating Scroll to Top.
  *
  * @package MughdoNewspaper
  * @author Kawsar Ahmed
@@ -20,6 +20,8 @@ const ProthomNewsApp = {
     this.initSubCatTabs();
     this.initReaderReactions();
     this.initBookmarkSystem();
+    this.initScrollToTop();
+    this.initReadingProgressBar();
   },
 
   /**
@@ -34,6 +36,7 @@ const ProthomNewsApp = {
     this.initSubCatTabs();
     this.initReaderReactions();
     this.initBookmarkSystem();
+    this.initReadingProgressBar();
   },
 
   /**
@@ -86,107 +89,68 @@ const ProthomNewsApp = {
 
     if (!modalOverlay) return;
 
-    let selectedIndex = -1;
-
     const openSearch = () => {
       modalOverlay.classList.add('active');
       if (searchInput) searchInput.focus();
     };
 
+    const closeSearch = () => {
+      modalOverlay.classList.remove('active');
+    };
+
     if (triggerBtn) triggerBtn.addEventListener('click', openSearch);
     if (mobileSearchTrigger) mobileSearchTrigger.addEventListener('click', openSearch);
+    if (closeBtn) closeBtn.addEventListener('click', closeSearch);
 
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        modalOverlay.classList.remove('active');
-      });
-    }
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeSearch();
+    });
 
     document.addEventListener('keydown', (e) => {
-      if (!modalOverlay.classList.contains('active')) return;
-
-      if (e.key === 'Escape') {
-        modalOverlay.classList.remove('active');
-        return;
-      }
-
-      const items = resultsGrid.querySelectorAll('.sub-lead-item');
-      if (items.length === 0) return;
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        selectedIndex = (selectedIndex + 1) % items.length;
-        this.highlightSearchItem(items, selectedIndex);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        selectedIndex = (selectedIndex - 1 + items.length) % items.length;
-        this.highlightSearchItem(items, selectedIndex);
-      } else if (e.key === 'Enter' && selectedIndex >= 0 && selectedIndex < items.length) {
-        e.preventDefault();
-        items[selectedIndex].click();
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+        closeSearch();
       }
     });
 
-    let searchTimeout = null;
+    let debounceTimer;
     if (searchInput && resultsGrid) {
       searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
         const query = e.target.value.trim();
-        clearTimeout(searchTimeout);
-        selectedIndex = -1;
 
         if (query.length < 2) {
           resultsGrid.innerHTML = '';
           return;
         }
 
-        resultsGrid.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--text-muted);">খোঁজা হচ্ছে...</div>';
+        debounceTimer = setTimeout(() => {
+          resultsGrid.innerHTML = '<div style="text-align:center; padding:1rem; color:var(--text-muted);">খোঁজা হচ্ছে...</div>';
+          
+          const apiUrl = window.ProthomNewsData ? window.ProthomNewsData.apiUrl : '/wp-json/prothom-news/v1';
+          fetch(`${apiUrl}/search?q=${encodeURIComponent(query)}`)
+            .then(res => res.json())
+            .then(data => {
+              if (!data || data.length === 0) {
+                resultsGrid.innerHTML = '<div style="text-align:center; padding:1rem; color:var(--text-muted);">কোনো সংবাদ পাওয়া যায়নি।</div>';
+                return;
+              }
 
-        searchTimeout = setTimeout(async () => {
-          try {
-            const apiEndpoint = `${ProthomNewsData.apiUrl}/search?s=${encodeURIComponent(query)}`;
-            const response = await fetch(apiEndpoint);
-            const data = await response.json();
-
-            if (data.results && data.results.length > 0) {
-              let html = '';
-              data.results.forEach((item) => {
-                html += `
-                  <a href="${item.link}" class="sub-lead-item">
-                    <div class="sub-lead-img-wrapper">
-                      <img src="${item.thumbnail}" alt="${item.title}" loading="lazy" />
-                    </div>
-                    <div>
-                      <span style="font-size:0.75rem; color:var(--brand-red); font-weight:700;">${item.category}</span>
-                      <h4 class="sub-lead-title" style="font-size:0.95rem;">${item.title}</h4>
-                      <span style="font-size:0.75rem; color:var(--text-muted);">${item.date}</span>
-                    </div>
-                  </a>
-                `;
-              });
-              resultsGrid.innerHTML = html;
-            } else {
-              resultsGrid.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--text-muted);">কোনো ফলাফল পাওয়া যায়নি</div>';
-            }
-          } catch (err) {
-            console.error('Search error:', err);
-            resultsGrid.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--brand-red);">ত্রুটি ঘটেছে! আবার চেষ্টা করুন।</div>';
-          }
+              resultsGrid.innerHTML = data.map(item => `
+                <a href="${item.url}" class="live-search-item" style="display:flex; gap:1rem; padding:0.5rem; border-bottom:1px solid var(--border-color); text-decoration:none; color:inherit;">
+                  <img src="${item.thumbnail}" alt="" style="width:80px; height:50px; object-fit:cover; border-radius:4px;" />
+                  <div>
+                    <h4 style="font-size:0.95rem; margin:0 0 0.2rem 0; color:var(--text-primary);">${item.title}</h4>
+                    <span style="font-size:0.75rem; color:var(--brand-red); font-weight:bold;">${item.category}</span>
+                  </div>
+                </a>
+              `).join('');
+            })
+            .catch(() => {
+              resultsGrid.innerHTML = '<div style="text-align:center; padding:1rem; color:var(--text-muted);">সার্চের সময় সমস্যা হয়েছে।</div>';
+            });
         }, 300);
       });
     }
-  },
-
-  highlightSearchItem(items, index) {
-    items.forEach((item, i) => {
-      if (i === index) {
-        item.style.borderColor = 'var(--brand-red)';
-        item.style.backgroundColor = 'var(--bg-secondary)';
-        item.scrollIntoView({ block: 'nearest' });
-      } else {
-        item.style.borderColor = 'var(--border-color)';
-        item.style.backgroundColor = 'var(--bg-card)';
-      }
-    });
   },
 
   /**
@@ -206,65 +170,146 @@ const ProthomNewsApp = {
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'bn-BD';
-    recognition.continuous = false;
+    recognition.interimResults = false;
 
     voiceBtn.addEventListener('click', () => {
-      voiceBtn.innerText = '🎙️ শুনছি... (কথা বলুন)';
+      voiceBtn.classList.add('listening');
+      voiceBtn.innerText = '🎙️ শুনছি...';
       recognition.start();
     });
 
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
+    recognition.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
       searchInput.value = transcript;
       searchInput.dispatchEvent(new Event('input'));
-      voiceBtn.innerText = '🎤 ভয়েস সার্চ';
+      voiceBtn.classList.remove('listening');
+      voiceBtn.innerText = '🎙️ কথা বলে খুঁজুন';
     };
 
     recognition.onerror = () => {
-      voiceBtn.innerText = '🎤 ভয়েস সার্চ';
+      voiceBtn.classList.remove('listening');
+      voiceBtn.innerText = '🎙️ কথা বলে খুঁজুন';
     };
   },
 
   /**
-   * 4. Article Bookmark & "Read Later" System
+   * 4. Trending Tabs (সর্বশেষ / পঠিত)
+   */
+  initTrendingTabs() {
+    const tabBtns = document.querySelectorAll('.trending-tab-btn');
+    const tabContents = document.querySelectorAll('.trending-tab-content');
+
+    if (tabBtns.length === 0) return;
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-tab');
+        
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        btn.classList.add('active');
+        const activeContent = document.getElementById(`tab-${target}`);
+        if (activeContent) activeContent.classList.add('active');
+      });
+    });
+  },
+
+  /**
+   * 5. Sub-Category Tabs Filter Driver
+   */
+  initSubCatTabs() {
+    const subCatBtns = document.querySelectorAll('.tabbed-cat-btn');
+
+    subCatBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetCat = btn.getAttribute('data-cat');
+        const parentBlock = btn.closest('.category-block-wrapper');
+
+        if (!parentBlock) return;
+
+        parentBlock.querySelectorAll('.tabbed-cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cards = parentBlock.querySelectorAll('.tabbed-news-card');
+        cards.forEach(card => {
+          if (targetCat === 'all' || card.getAttribute('data-cat') === targetCat) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  },
+
+  /**
+   * 6. Reader Reactions Driver
+   */
+  initReaderReactions() {
+    const reactBtns = document.querySelectorAll('.reaction-btn');
+
+    reactBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const reaction = btn.getAttribute('data-reaction');
+        const postId   = btn.getAttribute('data-post-id');
+        const countEl  = btn.querySelector('.reaction-count');
+
+        if (!countEl) return;
+
+        let currentCount = parseInt(countEl.innerText) || 0;
+        countEl.innerText = currentCount + 1;
+        btn.style.borderColor = 'var(--brand-red)';
+
+        const apiUrl = window.ProthomNewsData ? window.ProthomNewsData.apiUrl : '/wp-json/prothom-news/v1';
+        fetch(`${apiUrl}/react`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_id: postId, reaction: reaction })
+        }).catch(() => {});
+      });
+    });
+  },
+
+  /**
+   * 7. Reader Bookmarks ("পরে পড়ুন") Driver
    */
   initBookmarkSystem() {
     const bookmarkBtn = document.getElementById('bookmark-article-btn');
+
     if (!bookmarkBtn) return;
 
     const postId = bookmarkBtn.getAttribute('data-post-id');
-    const postTitle = bookmarkBtn.getAttribute('data-title');
-    const postUrl = bookmarkBtn.getAttribute('data-url');
-    const storageKey = 'mughdo_bookmarks';
+    const title  = bookmarkBtn.getAttribute('data-title');
+    const url    = bookmarkBtn.getAttribute('data-url');
 
-    let bookmarks = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    let bookmarks = JSON.parse(localStorage.getItem('prothom_bookmarks') || '[]');
     const isBookmarked = bookmarks.some(b => b.id === postId);
 
     if (isBookmarked) {
-      bookmarkBtn.innerHTML = '📌 <span>বুকমার্ক করা রয়েছে</span>';
-      bookmarkBtn.classList.add('active');
+      bookmarkBtn.classList.add('bookmarked');
+      bookmarkBtn.innerHTML = '📌 <span>সংরক্ষিত</span>';
     }
 
     bookmarkBtn.addEventListener('click', () => {
-      bookmarks = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      bookmarks = JSON.parse(localStorage.getItem('prothom_bookmarks') || '[]');
       const index = bookmarks.findIndex(b => b.id === postId);
 
       if (index > -1) {
         bookmarks.splice(index, 1);
+        bookmarkBtn.classList.remove('bookmarked');
         bookmarkBtn.innerHTML = '📌 <span>বুকমার্ক করুন</span>';
-        bookmarkBtn.classList.remove('active');
       } else {
-        bookmarks.push({ id: postId, title: postTitle, url: postUrl });
-        bookmarkBtn.innerHTML = '📌 <span>বুকমার্ক করা হয়েছে</span>';
-        bookmarkBtn.classList.add('active');
+        bookmarks.push({ id: postId, title: title, url: url });
+        bookmarkBtn.classList.add('bookmarked');
+        bookmarkBtn.innerHTML = '📌 <span>সংরক্ষিত</span>';
       }
-
-      localStorage.setItem(storageKey, JSON.stringify(bookmarks));
+      localStorage.setItem('prothom_bookmarks', JSON.stringify(bookmarks));
     });
   },
 
   /**
-   * 5. Copy Link Helper
+   * 8. Copy Article Link Button Driver
    */
   initCopyLink() {
     const copyBtn = document.getElementById('copy-link-btn');
@@ -274,124 +319,62 @@ const ProthomNewsApp = {
       const url = copyBtn.getAttribute('data-url') || window.location.href;
       navigator.clipboard.writeText(url).then(() => {
         const originalText = copyBtn.innerHTML;
-        copyBtn.innerHTML = '✅ <span>কপি করা হয়েছে</span>';
+        copyBtn.innerHTML = '✓ <span>কপি হয়েছে</span>';
         setTimeout(() => {
           copyBtn.innerHTML = originalText;
         }, 2000);
-      }).catch(err => {
-        console.error('Copy failed', err);
       });
     });
   },
 
   /**
-   * 6. Interactive Reader Reaction Buttons
-   */
-  initReaderReactions() {
-    const reactionBtns = document.querySelectorAll('.reaction-btn');
-    reactionBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const type = btn.getAttribute('data-reaction');
-        const postId = btn.getAttribute('data-post-id');
-        const countSpan = btn.querySelector('.reaction-count');
-        const storageKey = `react_${postId}_${type}`;
-
-        if (localStorage.getItem(storageKey)) {
-          alert('আপনি ইতিমধ্যে রিঅ্যাক্ট করেছেন!');
-          return;
-        }
-
-        let currentCount = parseInt(countSpan.innerText, 10) || 0;
-        currentCount++;
-        countSpan.innerText = currentCount;
-        btn.classList.add('active');
-        localStorage.setItem(storageKey, 'true');
-      });
-    });
-  },
-
-  /**
-   * 7. Mobile Off-Canvas Drawer Menu Controls
+   * 9. Off-Canvas Mobile Drawer Driver
    */
   initMobileDrawer() {
-    const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
-    const mobileDrawer = document.getElementById('mobile-drawer');
-    const mobileBackdrop = document.getElementById('mobile-drawer-backdrop');
-    const mobileCloseBtn = document.getElementById('mobile-drawer-close');
+    const triggerBtn = document.getElementById('mobile-menu-trigger');
+    const bottomBarTrigger = document.querySelector('.bottom-bar-item #mobile-menu-trigger') || document.querySelectorAll('#mobile-menu-trigger')[1];
+    const drawer = document.getElementById('mobile-drawer');
+    const backdrop = document.getElementById('mobile-drawer-backdrop');
+    const closeBtn = document.getElementById('mobile-drawer-close');
 
-    if (!mobileDrawer || !mobileBackdrop) return;
+    if (!drawer || !backdrop) return;
 
     const openDrawer = () => {
-      mobileDrawer.classList.add('active');
-      mobileBackdrop.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      drawer.classList.add('active');
+      backdrop.classList.add('active');
     };
 
     const closeDrawer = () => {
-      mobileDrawer.classList.remove('active');
-      mobileBackdrop.classList.remove('active');
-      document.body.style.overflow = '';
+      drawer.classList.remove('active');
+      backdrop.classList.remove('active');
     };
 
-    if (mobileMenuTrigger) mobileMenuTrigger.addEventListener('click', openDrawer);
-    if (mobileCloseBtn) mobileCloseBtn.addEventListener('click', closeDrawer);
-    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeDrawer);
+    if (triggerBtn) triggerBtn.addEventListener('click', openDrawer);
+    if (bottomBarTrigger) bottomBarTrigger.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    backdrop.addEventListener('click', closeDrawer);
 
-    mobileDrawer.addEventListener('click', (e) => {
-      if (e.target.closest('a')) {
-        closeDrawer();
-      }
-    });
-  },
-
-  /**
-   * 8. Interactive Sub-Category Tabs Filter
-   */
-  initSubCatTabs() {
-    const tabBtns = document.querySelectorAll('.sub-tab-btn');
-    tabBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const parentSection = btn.closest('.tabbed-cat-wrapper');
-        if (!parentSection) return;
-
-        const siblings = parentSection.querySelectorAll('.sub-tab-btn');
-        siblings.forEach((s) => s.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-  },
-
-  /**
-   * 9. Tab Switcher for Trending Widget
-   */
-  initTrendingTabs() {
-    const tabBtns = document.querySelectorAll('.trending-tabs .tab-btn');
-    const trendingLists = document.querySelectorAll('.trending-list-container');
-
-    tabBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const targetType = btn.getAttribute('data-tab');
-
-        tabBtns.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const activeList = document.getElementById(`trending-list-${targetType}`);
-        if (activeList) {
-          trendingLists.forEach((l) => (l.style.display = 'none'));
-          activeList.style.display = 'flex';
+    // Accordion Toggle for Mobile Drawer Submenus (Level 1, 2, 3)
+    document.querySelectorAll('.mobile-drawer .menu-item-has-children > a').forEach(parentLink => {
+      parentLink.addEventListener('click', (e) => {
+        const subMenu = parentLink.nextElementSibling;
+        if (subMenu && subMenu.classList.contains('sub-menu')) {
+          e.preventDefault();
+          subMenu.classList.toggle('active-accordion');
+          parentLink.classList.toggle('accordion-open');
         }
       });
     });
   },
 
   /**
-   * 10. Font Resizer (+A / -A) for Post Content
+   * 10. Single Article Font Size Adjuster (A+, A-, A)
    */
   initFontResizer() {
-    const articleBody = document.querySelector('.article-body-content');
-    const fontPlusBtn = document.getElementById('font-increase-btn');
+    const fontPlusBtn  = document.getElementById('font-increase-btn');
     const fontMinusBtn = document.getElementById('font-decrease-btn');
     const fontResetBtn = document.getElementById('font-reset-btn');
+    const articleBody  = document.querySelector('.article-body-content');
 
     if (!articleBody) return;
 
@@ -474,6 +457,56 @@ const ProthomNewsApp = {
         if (parentAd) parentAd.style.display = 'none';
       });
     }
+  },
+
+  /**
+   * 13. Scroll To Top Floating Button Driver
+   */
+  initScrollToTop() {
+    let topBtn = document.getElementById('scroll-to-top');
+    if (!topBtn) {
+      topBtn = document.createElement('button');
+      topBtn.id = 'scroll-to-top';
+      topBtn.className = 'scroll-to-top-btn';
+      topBtn.title = 'উপরে যান';
+      topBtn.setAttribute('aria-label', 'Scroll to top');
+      topBtn.innerHTML = '↑';
+      document.body.appendChild(topBtn);
+    }
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 350) {
+        topBtn.classList.add('visible');
+      } else {
+        topBtn.classList.remove('visible');
+      }
+    });
+
+    topBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  },
+
+  /**
+   * 14. Single Article Reading Progress Bar Driver
+   */
+  initReadingProgressBar() {
+    const progressBar = document.getElementById('article-reading-progress');
+    const article = document.querySelector('.main-article-content');
+
+    if (!progressBar || !article) return;
+
+    window.addEventListener('scroll', () => {
+      const articleBox = article.getBoundingClientRect();
+      const articleHeight = article.offsetHeight;
+      const windowHeight = window.innerHeight;
+      
+      const scrolled = Math.max(0, windowHeight - articleBox.top);
+      const total = articleHeight;
+      const percentage = Math.min(100, Math.max(0, (scrolled / total) * 100));
+
+      progressBar.style.width = `${percentage}%`;
+    });
   }
 };
 
