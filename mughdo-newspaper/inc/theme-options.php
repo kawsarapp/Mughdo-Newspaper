@@ -1,9 +1,10 @@
 <?php
 /**
- * Dynamic Theme Customizer Options Engine for ProthomNews
+ * Dynamic Theme Customizer Options Engine for Mughdo Newspaper
  * Custom Category Dropdown Control, 15 Dynamic Homepage Section Blocks, 3 Preset Homepages, Review Settings & Ad Engine
  *
- * @package ProthomNews
+ * @package MughdoNewspaper
+ * @author Kawsar Ahmed
  */
 
 if (!defined('ABSPATH')) {
@@ -27,7 +28,7 @@ if (class_exists('WP_Customize_Control')) {
               <?php endif; ?>
 
               <select <?php $this->link(); ?>>
-                <option value="0"><?php esc_html_e('— সকল ক্যাটাগরি (All Categories) —', 'prothom-news'); ?></option>
+                <option value="0"><?php esc_html_e('— সকল ক্যাটাগরি (All Categories) —', 'mughdo-newspaper'); ?></option>
                 <?php foreach ($categories as $cat) : ?>
                   <option value="<?php echo esc_attr($cat->term_id); ?>" <?php selected($this->value(), $cat->term_id); ?>>
                     <?php echo esc_html($cat->name . ' (' . $cat->count . ')'); ?>
@@ -48,16 +49,16 @@ class ProthomNews_Theme_Options {
 
     public static function register_customizer($wp_customize) {
         
-        // Panel: ProthomNews Global Options
+        // Panel: Mughdo Newspaper Options
         $wp_customize->add_panel('prothom_news_panel', array(
-            'title'       => __('ProthomNews কন্ট্রোল প্যানেল', 'prothom-news'),
+            'title'       => __('Mughdo Newspaper কন্ট্রোল প্যানেল', 'mughdo-newspaper'),
             'priority'    => 10,
-            'description' => __('হোমপেজের ৩টি থিম প্রিসেট, ১৫টি সেকশন ব্লক ও রিভিউ বক্স কাস্টমাইজ করুন।', 'prothom-news'),
+            'description' => __('হোমপেজের ৩টি থিম প্রিসেট, ১৫টি সেকশন ব্লক ও রিভিউ বক্স কাস্টমাইজ করুন।', 'mughdo-newspaper'),
         ));
 
         // Section 0: Homepage Presets Selector
         $wp_customize->add_section('prothom_preset_section', array(
-            'title'    => __('০. হোমপেজ লেআউট প্রিসেট (Preset Select)', 'prothom-news'),
+            'title'    => __('০. হোমপেজ লেআউট প্রিসেট (Preset Select)', 'mughdo-newspaper'),
             'panel'    => 'prothom_news_panel',
             'priority' => 5,
         ));
@@ -67,7 +68,7 @@ class ProthomNews_Theme_Options {
             'sanitize_callback' => 'sanitize_text_field',
         ));
         $wp_customize->add_control('homepage_preset', array(
-            'label'    => __('হোমপেজ রেডিমেড ডিজাইন প্রিসেট', 'prothom-news'),
+            'label'    => __('হোমপেজ রেডিমেড ডিজাইন প্রিসেট', 'mughdo-newspaper'),
             'section'  => 'prothom_preset_section',
             'type'     => 'select',
             'choices'  => array(
@@ -80,7 +81,7 @@ class ProthomNews_Theme_Options {
 
         // Section 1: Lead News Grid & Ticker
         $wp_customize->add_section('prothom_lead_section', array(
-            'title'    => __('১. লিড নিউজ ও ব্রেকিং টিংকার', 'prothom-news'),
+            'title'    => __('১. লিড নিউজ ও ব্রেকিং টিংকার', 'mughdo-newspaper'),
             'panel'    => 'prothom_news_panel',
             'priority' => 10,
         ));
@@ -90,7 +91,7 @@ class ProthomNews_Theme_Options {
             'sanitize_callback' => 'sanitize_text_field',
         ));
         $wp_customize->add_control('ticker_title', array(
-            'label'    => __('ব্রেকিং টিংকার লেবেল', 'prothom-news'),
+            'label'    => __('ব্রেকিং টিংকার লেবেল', 'mughdo-newspaper'),
             'section'  => 'prothom_lead_section',
             'type'     => 'text',
         ));
@@ -100,7 +101,7 @@ class ProthomNews_Theme_Options {
             'sanitize_callback' => 'absint',
         ));
         $wp_customize->add_control(new ProthomNews_Category_Dropdown_Control($wp_customize, 'ticker_category', array(
-            'label'    => __('ব্রেকিং নিউজ ক্যাটাগরি', 'prothom-news'),
+            'label'    => __('ব্রেকিং নিউজ ক্যাটাগরি', 'mughdo-newspaper'),
             'section'  => 'prothom_lead_section',
         )));
 
@@ -109,13 +110,13 @@ class ProthomNews_Theme_Options {
             'sanitize_callback' => 'absint',
         ));
         $wp_customize->add_control(new ProthomNews_Category_Dropdown_Control($wp_customize, 'lead_news_category', array(
-            'label'    => __('প্রধান লিড নিউজ ক্যাটাগরি', 'prothom-news'),
+            'label'    => __('প্রধান লিড নিউজ ক্যাটাগরি', 'mughdo-newspaper'),
             'section'  => 'prothom_lead_section',
         )));
 
         // Section 2: 15 Dynamic Homepage Blocks Setup Loop
         $wp_customize->add_section('prothom_blocks_section', array(
-            'title'    => __('২. ১৫টি হোমপেজ ডাইনামিক ব্লক সেটিং', 'prothom-news'),
+            'title'    => __('২. ১৫টি হোমপেজ ডাইনামিক ব্লক সেটিং', 'mughdo-newspaper'),
             'panel'    => 'prothom_news_panel',
             'priority' => 20,
         ));
@@ -139,6 +140,8 @@ class ProthomNews_Theme_Options {
             'quote_block'         => 'উক্তি ও উদ্ধৃতি ব্লক (Quote Card)',
             'gallery'             => 'ফটো গ্যালারি (Photo Gallery)',
             'opinion'             => 'কলামিস্ট ও মতামত (Opinion Columnists)',
+            'trending_cards'      => 'ট্রেন্ডিং র‍্যাঙ্কিং কার্ড (#১-#৪) (Trending Ranking)',
+            'editorial_columnist' => 'কলামিস্ট লেখক প্রোফাইল (Columnist Spotlight)',
         );
 
         for ($i = 1; $i <= 15; $i++) {
@@ -147,7 +150,7 @@ class ProthomNews_Theme_Options {
                 'sanitize_callback' => 'absint',
             ));
             $wp_customize->add_control("enable_block_{$i}", array(
-                'label'    => sprintf(__('ব্লক %d: চালু রাখুন', 'prothom-news'), $i),
+                'label'    => sprintf(__('ব্লক %d: চালু রাখুন', 'mughdo-newspaper'), $i),
                 'section'  => 'prothom_blocks_section',
                 'type'     => 'checkbox',
             ));
@@ -157,7 +160,7 @@ class ProthomNews_Theme_Options {
                 'sanitize_callback' => 'absint',
             ));
             $wp_customize->add_control(new ProthomNews_Category_Dropdown_Control($wp_customize, "cat_block_{$i}", array(
-                'label'    => sprintf(__('ব্লক %d: ক্যাটাগরি নির্বাচন করুন', 'prothom-news'), $i),
+                'label'    => sprintf(__('ব্লক %d: ক্যাটাগরি নির্বাচন করুন', 'mughdo-newspaper'), $i),
                 'section'  => 'prothom_blocks_section',
             )));
 
@@ -166,7 +169,7 @@ class ProthomNews_Theme_Options {
                 'sanitize_callback' => 'sanitize_text_field',
             ));
             $wp_customize->add_control("layout_block_{$i}", array(
-                'label'   => sprintf(__('ব্লক %d: লেআউট স্টাইল', 'prothom-news'), $i),
+                'label'   => sprintf(__('ব্লক %d: লেআউট স্টাইল', 'mughdo-newspaper'), $i),
                 'section' => 'prothom_blocks_section',
                 'type'    => 'select',
                 'choices' => $layouts_options,
@@ -177,7 +180,7 @@ class ProthomNews_Theme_Options {
                 'sanitize_callback' => 'absint',
             ));
             $wp_customize->add_control("count_block_{$i}", array(
-                'label'       => sprintf(__('ব্লক %d: সংবাদের সংখ্যা', 'prothom-news'), $i),
+                'label'       => sprintf(__('ব্লক %d: সংবাদের সংখ্যা', 'mughdo-newspaper'), $i),
                 'section'     => 'prothom_blocks_section',
                 'type'        => 'number',
                 'input_attrs' => array('min' => 1, 'max' => 15),
@@ -188,7 +191,7 @@ class ProthomNews_Theme_Options {
                 'sanitize_callback' => 'absint',
             ));
             $wp_customize->add_control("order_block_{$i}", array(
-                'label'       => sprintf(__('ব্লক %d: পজিশন/ক্রম নম্বর', 'prothom-news'), $i),
+                'label'       => sprintf(__('ব্লক %d: পজিশন/ক্রম নম্বর', 'mughdo-newspaper'), $i),
                 'section'     => 'prothom_blocks_section',
                 'type'        => 'number',
                 'input_attrs' => array('min' => 1, 'max' => 15),
@@ -197,7 +200,7 @@ class ProthomNews_Theme_Options {
 
         // Section 3: Review & Rating Settings (Full Position & Title Control)
         $wp_customize->add_section('prothom_review_section', array(
-            'title'    => __('৩. রিভিউ ও রেটিং বক্স সেটিংস', 'prothom-news'),
+            'title'    => __('৩. রিভিউ ও রেটিং বক্স সেটিংস', 'mughdo-newspaper'),
             'panel'    => 'prothom_news_panel',
             'priority' => 25,
         ));
@@ -208,7 +211,7 @@ class ProthomNews_Theme_Options {
             'sanitize_callback' => 'absint',
         ));
         $wp_customize->add_control('enable_global_review', array(
-            'label'    => __('রিভিউ বক্স প্রদর্শন চালু রাখুন', 'prothom-news'),
+            'label'    => __('রিভিউ বক্স প্রদর্শন চালু রাখুন', 'mughdo-newspaper'),
             'section'  => 'prothom_review_section',
             'type'     => 'checkbox',
         ));
@@ -219,7 +222,7 @@ class ProthomNews_Theme_Options {
             'sanitize_callback' => 'sanitize_text_field',
         ));
         $wp_customize->add_control('review_position', array(
-            'label'   => __('রিভিউ বক্সের পজিশন/স্থান', 'prothom-news'),
+            'label'   => __('রিভিউ বক্সের পজিশন/স্থান', 'mughdo-newspaper'),
             'section' => 'prothom_review_section',
             'type'    => 'select',
             'choices' => array(
@@ -235,14 +238,14 @@ class ProthomNews_Theme_Options {
             'sanitize_callback' => 'sanitize_text_field',
         ));
         $wp_customize->add_control('default_review_title', array(
-            'label'    => __('ডিফল্ট রিভিউ শিরোনাম', 'prothom-news'),
+            'label'    => __('ডিফল্ট রিভিউ শিরোনাম', 'mughdo-newspaper'),
             'section'  => 'prothom_review_section',
             'type'     => 'text',
         ));
 
         // Section 4: Ad Engine Manager
         $wp_customize->add_section('prothom_ads_section', array(
-            'title'    => __('৪. বিজ্ঞাপন ম্যানেজার (Ad Slots)', 'prothom-news'),
+            'title'    => __('৪. বিজ্ঞাপন ম্যানেজার (Ad Slots)', 'mughdo-newspaper'),
             'panel'    => 'prothom_news_panel',
             'priority' => 30,
         ));
@@ -265,7 +268,7 @@ class ProthomNews_Theme_Options {
                 'label'       => esc_html($slot_label),
                 'section'     => 'prothom_ads_section',
                 'type'        => 'textarea',
-                'description' => __('Google AdSense বা ইমেজ HTML কোড বসান।', 'prothom-news'),
+                'description' => __('Google AdSense বা ইমেজ HTML কোড বসান।', 'mughdo-newspaper'),
             ));
         }
     }
