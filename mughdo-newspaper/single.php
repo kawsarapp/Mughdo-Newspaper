@@ -1,7 +1,7 @@
 <?php
 /**
  * Single News Post Template for Mughdo Newspaper
- * Rich Post Experience: Dynamic Review Box Position, Customizer Meta Toggles, Bookmark System, TTS Voice Reader, Reader Reactions.
+ * Rich Post Experience: 12 Custom Ad Slots, Dynamic Review Box Position, Customizer Meta Toggles, Bookmark System, TTS Voice Reader, Reader Reactions.
  *
  * @package MughdoNewspaper
  * @author Kawsar Ahmed
@@ -110,13 +110,19 @@ if (have_posts()) : while (have_posts()) : the_post();
         <?php ProthomNews_Review_System::render_review_box($post_id); ?>
       <?php endif; ?>
 
-      <!-- In-Article Ad Slot -->
+      <!-- Ad Slot 8: In-Article Top Banner (Above Content) -->
+      <?php ProthomNews_Theme_Options::render_ad('ad_single_above_content', 'my-3'); ?>
+
+      <!-- Ad Slot 9: In-Article Content Ad -->
       <?php ProthomNews_Theme_Options::render_ad('ad_single_post', 'my-3'); ?>
 
       <!-- Article Main Body Text -->
       <div class="article-body-content">
         <?php the_content(); ?>
       </div>
+
+      <!-- Ad Slot 10: In-Article Bottom Banner (Below Content) -->
+      <?php ProthomNews_Theme_Options::render_ad('ad_single_below_content', 'my-3'); ?>
 
       <!-- Position 3: Review Badge Below Article Text -->
       <?php if ($review_global && $review_pos === 'below_content') : ?>
@@ -243,10 +249,11 @@ if (have_posts()) : while (have_posts()) : the_post();
 
     </article>
 
-    <!-- Sidebar Column -->
+    <!-- Sidebar Column (Ad Slot 3: Square Ad + Ad Slot 4: Half Page Sticky Ad) -->
     <aside class="single-sidebar">
       <?php get_template_part('template-parts/content-trending'); ?>
       <?php ProthomNews_Theme_Options::render_ad('ad_lead_sidebar', 'mt-4'); ?>
+      <?php ProthomNews_Theme_Options::render_ad('ad_sidebar_sticky', 'mt-4'); ?>
     </aside>
 
   </div>

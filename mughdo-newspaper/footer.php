@@ -36,16 +36,13 @@ $ig_url = get_theme_mod('social_ig', '#');
 <!-- Mobile App-like Sticky Bottom Bar -->
 <?php get_template_part('template-parts/mobile-bottom-bar'); ?>
 
-<!-- Sticky Bottom Banner Ad Slot -->
-<?php 
-$sticky_ad = get_theme_mod('ad_sticky_bottom', '');
-if (!empty($sticky_ad)) : 
-?>
-  <div class="prothom-ad-slot ad-sticky-bottom">
-    <button class="ad-close-btn" title="বিজ্ঞাপন বন্ধ করুন">✕</button>
-    <div class="ad-content"><?php echo $sticky_ad; ?></div>
-  </div>
-<?php endif; ?>
+<!-- Sticky Bottom Banner Ad Slot (Slot 12) -->
+<?php ProthomNews_Theme_Options::render_ad('ad_sticky_bottom', 'ad-sticky-bottom'); ?>
+
+<!-- Ad Slot 11: Above Footer Full Width Banner (970x90) -->
+<div class="container my-4">
+  <?php ProthomNews_Theme_Options::render_ad('ad_footer_top'); ?>
+</div>
 
 <!-- Main Responsive Footer -->
 <footer class="site-footer">

@@ -1,7 +1,7 @@
 <?php
 /**
  * Dynamic Theme Customizer Options Engine for Mughdo Newspaper
- * Custom Category Dropdown Control, 20 Dynamic Homepage Section Blocks, Dynamic Image & AdSense Ads Manager, GA4, Search Console, AI Crawler Controls, Review Settings, 7 Enterprise Modules & Typography Custom Fonts Manager
+ * Custom Category Dropdown Control, 20 Dynamic Homepage Section Blocks, Expanded 12 Custom Ad Slots Engine (Custom Image + Google AdSense), GA4, Search Console, AI Crawler Controls, Review Settings, 7 Enterprise Modules & Typography Custom Fonts Manager
  *
  * @package MughdoNewspaper
  * @author Kawsar Ahmed
@@ -23,7 +23,7 @@ class ProthomNews_Theme_Options {
         $wp_customize->add_panel('prothom_news_panel', array(
             'title'       => __('Mughdo Newspaper কন্ট্রোল প্যানেল', 'mughdo-newspaper'),
             'priority'    => 10,
-            'description' => __('হোমপেজের ৩টি থিম প্রিসেট, ২০টি সেকশন ব্লক, ৭টি এন্টারপ্রাইজ মডিউল, ডাইনামিক টাইপোগ্রাফি ফন্ট ম্যানেজার, ডাইনামিক বিজ্ঞাপন ম্যানেজার, GA4, Search Console ও AI Bot কন্ট্রোল কাস্টমাইজ করুন।', 'mughdo-newspaper'),
+            'description' => __('হোমপেজের ৩টি থিম প্রিসেট, ২০টি সেকশন ব্লক, ৭টি এন্টারপ্রাইজ মডিউল, ১২টি কাস্টম বিজ্ঞাপন স্লোট, ডাইনামিক টাইপোগ্রাফি ফন্ট ম্যানেজার, GA4, Search Console ও AI Bot কন্ট্রোল কাস্টমাইজ করুন।', 'mughdo-newspaper'),
         ));
 
         // Get Dynamic Categories List for Select Control Choices
@@ -322,20 +322,30 @@ class ProthomNews_Theme_Options {
             'type'     => 'checkbox',
         ));
 
-        // Section 6: Dynamic Ads Engine Manager (Image Banner Ads + AdSense Code Modes)
+        // Section 6: Expanded 12 Custom Ad Slots Engine Manager (Image Banner Ads + AdSense Code Modes)
         $wp_customize->add_section('prothom_ads_section', array(
-            'title'    => __('৬. ডাইনামিক বিজ্ঞাপন ম্যানেজার (Custom Image & AdSense Ads)', 'mughdo-newspaper'),
+            'title'    => __('৬. ডাইনামিক বিজ্ঞাপন ম্যানেজার (১২টি কাস্টম ব্যানার ও AdSense)', 'mughdo-newspaper'),
             'panel'    => 'prothom_news_panel',
             'priority' => 30,
+            'description' => __('ওয়েবসাইটের সকল গুরুত্বপূর্ণ স্থান (হেডার, সাইডবার, কন্টেন্টের ওপরে/ভেতরে/নিচে, হোমপেজ ব্লক ও ফুটার)-এ ১২টি কাস্টম বিজ্ঞাপন যুক্ত করুন।', 'mughdo-newspaper'),
         ));
 
         $ad_slots = array(
-            'ad_header_top'   => array('label' => '১. হেডার সেরা বিজ্ঞাপন (Header Top)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 পিক্সেল'),
-            'ad_after_lead'   => array('label' => '২. লিড নিউজের পর মেগা লিডারবোর্ড (After Lead)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 970 x 90 পিক্সেল'),
-            'ad_lead_sidebar' => array('label' => '৩. সাইডবার স্কাইস্ক্রেপার বিজ্ঞাপন (Sidebar)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 300 x 250 পিক্সেল'),
-            'ad_middle_home'  => array('label' => '৪. হোমপেজ মাঝখানের বিজ্ঞাপন (Middle Home)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 পিক্সেল'),
-            'ad_single_post'  => array('label' => '৫. সংবাদের ভেতরের ইন-আর্টিকেল বিজ্ঞাপন (In-Article)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 300 x 250 পিক্সেল'),
-            'ad_sticky_bottom'=> array('label' => '৬. স্টিকি বটম মোবাইল বিজ্ঞাপন (Sticky Bottom)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 320 x 50 পিক্সেল'),
+            'ad_header_top'           => array('label' => '১. হেডার সর্বমোট ব্যানার (Header Top Leaderboard)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 পিক্সেল'),
+            'ad_after_lead'           => array('label' => '২. লিড নিউজের পর মেগা ব্যানার (After Lead Mega Banner)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 970 x 90 পিক্সেল'),
+            'ad_lead_sidebar'         => array('label' => '৩. প্রধান সাইডবার ব্যানার ১ (Sidebar Square Ad 1)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 300 x 250 পিক্সেল'),
+            'ad_sidebar_secondary'   => array('label' => '৪. প্রধান সাইডবার ২য় ডাইনামিক ব্যানার (Sidebar Secondary Responsive Ad)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 300 x 250 / 300 x 300 পিক্সেল'),
+            'ad_hero_left_bottom'     => array('label' => '৫. প্রধান হিরো খবরের নিচের কাস্টম ব্যানার (Left Hero Bottom Ad Slot)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 300 x 250 / 728 x 90 পিক্সেল'),
+            'ad_hero_section_bottom'  => array('label' => '৬. চিহ্নিত হিরো সেকশনের নিচের ডাইনামিক ব্যানার (Marked Lead Bottom Wide Ad)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 / 728 x 180 পিক্সেল'),
+            'ad_sidebar_sticky'       => array('label' => '৭. সাইডবার স্টিকি হাফ-পেজ ব্যানার (Sidebar Half-Page Sticky Ad)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 300 x 600 পিক্সেল'),
+            'ad_middle_home'          => array('label' => '৮. হোমপেজ মাঝখানের বিফোর ব্যানার (Middle Home Banner)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 পিক্সেল'),
+            'ad_after_block_5'        => array('label' => '৯. হোমপেজ ব্লক ৫ এর পর ব্যানার (Homepage After Block 5 Ad)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 970 x 90 পিক্সেল'),
+            'ad_after_block_10'       => array('label' => '১০. হোমপেজ ব্লক ১০ এর পর ব্যানার (Homepage After Block 10 Ad)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 পিক্সেল'),
+            'ad_single_above_content' => array('label' => '১১. সংবাদের মূল লেখার ওপরে ব্যানার (In-Article Top Banner)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 পিক্সেল'),
+            'ad_single_post'          => array('label' => '১২. সংবাদের মূল লেখার ভেতরের ব্যানার (In-Article Content Ad)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 300 x 250 / 336 x 280 পিক্সেল'),
+            'ad_single_below_content' => array('label' => '১৩. সংবাদের মূল লেখার নিচে ব্যানার (In-Article Bottom Banner)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 728 x 90 / 300 x 250 পিক্সেল'),
+            'ad_footer_top'           => array('label' => '১৪. ফুটারের ওপরে ফুল-উইডথ ব্যানার (Above Footer Full Width Ad)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 970 x 90 পিক্সেল'),
+            'ad_sticky_bottom'        => array('label' => '১৫. মোবাইল স্টিকি বটম ব্যানার (Sticky Mobile Bottom Banner)', 'size' => 'অনুমোদিত ব্যানার সাইজ: 320 x 50 পিক্সেল'),
         );
 
         foreach ($ad_slots as $slot_key => $slot_data) {
@@ -477,12 +487,14 @@ class ProthomNews_Theme_Options {
 
         if (empty($img_url)) {
             $theme_uri = get_template_directory_uri();
-            if ($slot_key === 'ad_header_top' || $slot_key === 'ad_middle_home') {
+            if ($slot_key === 'ad_header_top' || $slot_key === 'ad_middle_home' || $slot_key === 'ad_after_block_10' || $slot_key === 'ad_single_above_content' || $slot_key === 'ad_single_below_content' || $slot_key === 'ad_hero_left_bottom') {
                 $img_url = $theme_uri . '/assets/images/ads/ad-728x90.svg';
-            } elseif ($slot_key === 'ad_after_lead') {
+            } elseif ($slot_key === 'ad_after_lead' || $slot_key === 'ad_after_block_5' || $slot_key === 'ad_footer_top') {
                 $img_url = $theme_uri . '/assets/images/ads/ad-970x90.svg';
-            } elseif ($slot_key === 'ad_lead_sidebar' || $slot_key === 'ad_single_post') {
+            } elseif ($slot_key === 'ad_lead_sidebar' || $slot_key === 'ad_sidebar_secondary' || $slot_key === 'ad_single_post') {
                 $img_url = $theme_uri . '/assets/images/ads/ad-300x250.svg';
+            } elseif ($slot_key === 'ad_sidebar_sticky') {
+                $img_url = $theme_uri . '/assets/images/ads/ad-300x600.svg';
             } elseif ($slot_key === 'ad_sticky_bottom') {
                 $img_url = $theme_uri . '/assets/images/ads/ad-320x50.svg';
             }

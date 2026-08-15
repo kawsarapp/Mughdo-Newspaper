@@ -61,8 +61,10 @@ $bn_date = ProthomNews_Bangla_Date::get_current_bangla_date();
     </div>
   </div>
 
-  <!-- Header Ad Slot (Header Top Banner 728x90) -->
-  <?php ProthomNews_Theme_Options::render_ad('ad_header_top', 'my-2'); ?>
+  <!-- Header Ad Slot (Header Top Banner 728x90 - Container Wrapped) -->
+  <div class="container text-center my-2">
+    <?php ProthomNews_Theme_Options::render_ad('ad_header_top'); ?>
+  </div>
 
   <!-- Main Header Brand Grid (Logo & Tagline) -->
   <div class="main-header">

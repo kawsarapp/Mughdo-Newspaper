@@ -2,7 +2,7 @@
 /**
  * Front Page Template Router for Mughdo Newspaper
  * Renders Custom Homepage Layouts & Presets whether WP Settings -> Reading is set to "Latest Posts" OR "A Static Page".
- * Smart Auto-Category Distribution & Custom Title Resolver.
+ * Smart Auto-Category Distribution & Custom Title Resolver with 12 Ad Slots Engine.
  *
  * @package MughdoNewspaper
  * @author Kawsar Ahmed
@@ -37,7 +37,7 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
       <!-- Lead News Grid Component -->
       <?php get_template_part('template-parts/content-lead'); ?>
 
-      <!-- Ad Slot: After Lead Grid -->
+      <!-- Ad Slot 2: After Lead Grid -->
       <?php ProthomNews_Theme_Options::render_ad('ad_after_lead', 'my-3'); ?>
 
       <!-- Dynamic Customizer Section Blocks Loop (1 to 20) -->
@@ -89,11 +89,20 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
               'block_index' => $block['index'],
           ));
 
-          if ($block_counter === 3) {
-              ProthomNews_Theme_Options::render_ad('ad_middle_home', 'my-4');
+          // Ad Slot 6: After Block 5
+          if ($block_counter === 5) {
+              ProthomNews_Theme_Options::render_ad('ad_after_block_5', 'my-4');
+          }
+
+          // Ad Slot 7: After Block 10
+          if ($block_counter === 10) {
+              ProthomNews_Theme_Options::render_ad('ad_after_block_10', 'my-4');
           }
       }
       ?>
+
+      <!-- Ad Slot 5: Middle Home Banner -->
+      <?php ProthomNews_Theme_Options::render_ad('ad_middle_home', 'my-4'); ?>
 
     </div>
   </div>

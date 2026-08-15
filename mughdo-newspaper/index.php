@@ -1,24 +1,12 @@
 <?php
 /**
- * Dynamic Homepage Template Router for Mughdo Newspaper
- * Renders Selected Homepage Preset (Homepage 1, Homepage 2, Homepage 3, or Custom Dynamic Blocks)
- * Smart Auto-Category Distribution & Custom Title Resolver.
+ * Main Template File for Mughdo Newspaper
+ * Renders Prothom Alo Style Lead News Grid + 20 Customizer Category Blocks with Smart Fallback Queries & 12 Custom Ad Slots Engine.
  *
  * @package MughdoNewspaper
  * @author Kawsar Ahmed
  */
 
-$preset = get_theme_mod('homepage_preset', 'preset_1');
-
-if ($preset === 'preset_2') {
-    get_template_part('page-templates/homepage-2');
-    return;
-} elseif ($preset === 'preset_3') {
-    get_template_part('page-templates/homepage-3');
-    return;
-}
-
-// Default: Homepage 1 (Classic Prothom Alo Grid) or Custom 20 Dynamic Section Blocks
 get_header();
 
 // Fetch all available categories to auto-distribute distinct categories if unassigned
@@ -33,7 +21,7 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
       <!-- Lead News Grid Component -->
       <?php get_template_part('template-parts/content-lead'); ?>
 
-      <!-- Ad Slot: After Lead Grid -->
+      <!-- Ad Slot 2: After Lead Grid -->
       <?php ProthomNews_Theme_Options::render_ad('ad_after_lead', 'my-3'); ?>
 
       <!-- Dynamic Customizer Section Blocks Loop (1 to 20) -->
@@ -85,11 +73,20 @@ $cat_count      = !empty($all_categories) ? count($all_categories) : 0;
               'block_index' => $block['index'],
           ));
 
-          if ($block_counter === 3) {
-              ProthomNews_Theme_Options::render_ad('ad_middle_home', 'my-4');
+          // Ad Slot 6: After Block 5
+          if ($block_counter === 5) {
+              ProthomNews_Theme_Options::render_ad('ad_after_block_5', 'my-4');
+          }
+
+          // Ad Slot 7: After Block 10
+          if ($block_counter === 10) {
+              ProthomNews_Theme_Options::render_ad('ad_after_block_10', 'my-4');
           }
       }
       ?>
+
+      <!-- Ad Slot 5: Middle Home Banner -->
+      <?php ProthomNews_Theme_Options::render_ad('ad_middle_home', 'my-4'); ?>
 
     </div>
   </div>

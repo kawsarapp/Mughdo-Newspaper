@@ -79,6 +79,14 @@ function mughdo_newspaper_setup() {
     add_theme_support('wc-product-gallery-lightbox');
     add_theme_support('wc-product-gallery-slider');
 
+    // Elementor Page Builder & Gutenberg Block Editor Full Theme Compatibility
+    add_theme_support('elementor');
+    add_theme_support('responsive-embeds');
+    add_theme_support('custom-line-height');
+    add_theme_support('custom-spacing');
+    add_theme_support('custom-units');
+    add_theme_support('wp-block-styles');
+
     // Register Nav Menus
     register_nav_menus(array(
         'primary' => __('Main Navigation Menu', 'mughdo-newspaper'),
